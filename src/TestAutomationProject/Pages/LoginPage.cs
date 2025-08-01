@@ -1,56 +1,98 @@
 ﻿using OpenQA.Selenium;
+using TestAutomationProject.Core;
 
 namespace TestAutomationProject.Pages
 {
-    public class LoginPage : Page
+    public class LoginPage : CommonPage
     {
-        private readonly string _usernameInputId = "Username";
-        private readonly string _passwordInputId = "Password";
-        private readonly string _loginButtonXPath = "//button[@type='submit']";
-        private readonly string _errorMessageXPath = "//div[contains(@class, 'error')]";
+        // Google Login sayfası elementleri
+        private readonly By _emailInput = By.Name("identifier");
+        private readonly By _passwordInput = By.Name("password");
+        private readonly By _nextButton = By.Id("identifierNext");
+        private readonly By _passwordNextButton = By.Id("passwordNext");
+        private readonly By _errorMessage = By.XPath("//div[contains(@class, 'error')]");
+        private readonly By _googleLogo = By.XPath("//img[@alt='Google']");
 
         public LoginPage(IWebDriver driver) : base(driver)
         {
         }
 
-        public void EnterUsername(string username)
+        /// <summary>
+        /// Google login sayfasına gider
+        /// </summary>
+        public void NavigateToGoogleLogin()
         {
-            var usernameInput = FindElementById(_usernameInputId);
-            usernameInput.Clear();
-            usernameInput.SendKeys(username);
+            _driver.Navigate().GoToUrl("https://accounts.google.com/signin");
+            WaitForPageLoad();
         }
 
+        /// <summary>
+        /// Email adresini girer
+        /// </summary>
+        public void EnterEmail(string email)
+        {
+            WaitAndSendKeys(_emailInput, email);
+        }
+
+        /// <summary>
+        /// Email sonrası Next butonuna tıklar
+        /// </summary>
+        public void ClickNextAfterEmail()
+        {
+            WaitAndClick(_nextButton);
+        }
+
+        /// <summary>
+        /// Şifreyi girer
+        /// </summary>
         public void EnterPassword(string password)
         {
-            var passwordInput = FindElementById(_passwordInputId);
-            passwordInput.Clear();
-            passwordInput.SendKeys(password);
+            WaitAndSendKeys(_passwordInput, password);
         }
 
-        public void ClickLoginButton()
+        /// <summary>
+        /// Şifre sonrası Next butonuna tıklar
+        /// </summary>
+        public void ClickNextAfterPassword()
         {
-            var loginButton = FindElementByXpath(_loginButtonXPath);
-            loginButton.Click();
+            WaitAndClick(_passwordNextButton);
         }
 
-        public void Login(string username, string password)
+        /// <summary>
+        /// Google hesabına giriş yapar
+        /// </summary>
+        public void LoginToGoogle(string email, string password)
         {
-            EnterUsername(username);
+            NavigateToGoogleLogin();
+            EnterEmail(email);
+            ClickNextAfterEmail();
+            Wait(2000); // Şifre alanının yüklenmesi için bekleme
             EnterPassword(password);
-            ClickLoginButton();
+            ClickNextAfterPassword();
         }
 
-        public bool IsLoginErrorVisible()
+        /// <summary>
+        /// Hata mesajını alır
+        /// </summary>
+        public string GetErrorMessage()
         {
-            try
-            {
-                var error = FindElementByXpath(_errorMessageXPath, 5);
-                return error.Displayed;
-            }
-            catch
-            {
-                return false;
-            }
+            return WaitAndGetText(_errorMessage);
+        }
+
+        /// <summary>
+        /// Google logosunun görünür olup olmadığını kontrol eder
+        /// </summary>
+        public bool IsGoogleLogoVisible()
+        {
+            return WaitAndIsDisplayed(_googleLogo);
+        }
+
+        /// <summary>
+        /// Login sayfasının yüklendiğini kontrol eder
+        /// </summary>
+        public bool IsLoginPageLoaded()
+        {
+            return WaitAndIsDisplayed(_emailInput);
         }
     }
 }

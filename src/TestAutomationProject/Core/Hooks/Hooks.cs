@@ -7,12 +7,12 @@ using Serilog.Core;
 using Serilog.Events;
 using TechTalk.SpecFlow;
 using Status = Allure.Commons.Status;
+using NUnit.Framework;
+using TestAutomationProject.Pages;
+using TestAutomationProject.Core;
 using AventStack.ExtentReports;
 using AventStack.ExtentReports.Reporter;
-using NUnit.Framework;
-using OpenQA.Selenium.BiDi.Communication;
-using OpenQA.Selenium.Internal.Logging;
-using System.Security.AccessControl;
+
 namespace TestAutomationProject.Core.Hooks
 {
     [Binding]
@@ -41,26 +41,26 @@ namespace TestAutomationProject.Core.Hooks
         [BeforeTestRun]
         public static void BeforeTestRun()
         {
-            AllureLifecycle.Instance.CleanupResultDirectory();
-            LoggingLevelSwitch levelSwitch = new LoggingLevelSwitch(LogEventLevel.Debug);
-            Log.Logger = new LoggerConfiguration()
+            // AllureLifecycle.Instance.CleanupResultDirectory();
+            LoggingLevelSwitch levelSwitch = new LoggingLevelSwitch(Serilog.Events.LogEventLevel.Debug);
+            Serilog.Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.ControlledBy(levelSwitch)
                 .WriteTo.File(reportPath + @"/Logs",
                     outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} | {Level:u3} | {Message} {NewLine}",
                     rollingInterval: RollingInterval.Day).CreateLogger();
 
-            var htmlReporter = new ExtentHtmlReporter(@"extent-reports/extent-report.html");
-            htmlReporter.Config.Theme = AventStack.ExtentReports.Reporter.Configuration.Theme.Dark;
-            htmlReporter.LoadConfig(System.IO.Directory.GetParent(@"../../../") + "/extent-config.xml");
-            extent = new ExtentReports();
-            extent.AttachReporter(htmlReporter);
+            // ExtentReports kurulumu - geçici olarak kaldırıldı
+            // var htmlReporter = new ExtentHtmlReporter(@"extent-reports/extent-report.html");
+            // htmlReporter.Config.Theme = AventStack.ExtentReports.Reporter.Configuration.Theme.Dark;
+            // extent = new ExtentReports();
+            // extent.AttachReporter(htmlReporter);
         }
 
         [AfterTestRun]
         public static void AfterTestRun()
         {
             // Finalizing and saving report  
-            extent.Flush();
+            // extent.Flush();
         }
 
         [BeforeStep]
@@ -85,13 +85,13 @@ namespace TestAutomationProject.Core.Hooks
 
             if (e.Count > 0)
             {
-                byte[] successScreenshot = ((ITakesScreenshot)webDriver).GetScreenshot().AsByteArray;
-                AllureLifecycle.Instance.AddAttachment(errorMessage, "image/png", successScreenshot);
-                var screenshot = ((ITakesScreenshot)webDriver).GetScreenshot().AsBase64EncodedString;
-                scenarioTest.Info(scenarioContext.StepContext.StepInfo.Text, MediaEntityBuilder.CreateScreenCaptureFromBase64String(screenshot).Build());
+                // byte[] successScreenshot = ((ITakesScreenshot)webDriver).GetScreenshot().AsByteArray;
+                // AllureLifecycle.Instance.AddAttachment(errorMessage, "image/png", successScreenshot);
+                // var screenshot = ((ITakesScreenshot)webDriver).GetScreenshot().AsBase64EncodedString;
+                // scenarioTest.Info(scenarioContext.StepContext.StepInfo.Text, MediaEntityBuilder.CreateScreenCaptureFromBase64String(screenshot).Build());
             }
 
-            scenarioTest.CreateNode(scenarioContext.StepContext.StepInfo.Text);
+            // scenarioTest.CreateNode(scenarioContext.StepContext.StepInfo.Text);
         }
 
         [AfterStep]
@@ -100,13 +100,13 @@ namespace TestAutomationProject.Core.Hooks
             if (context.TestError != null)
             {
                 //Allure Reporting
-                Log.Error("Test Step Failed | {0}", context.TestError.Message);
-                byte[] screenshot = ((ITakesScreenshot)webDriver).GetScreenshot().AsByteArray;
-                AllureLifecycle.Instance.AddAttachment("Failed Screenshot", "image/png", screenshot);
+                Serilog.Log.Error("Test Step Failed | {0}", context.TestError.Message);
+                // byte[] screenshot = ((ITakesScreenshot)webDriver).GetScreenshot().AsByteArray;
+                // AllureLifecycle.Instance.AddAttachment("Failed Screenshot", "image/png", screenshot);
 
                 //Extend Reporting
-                var screenshotEncoded = ((ITakesScreenshot)webDriver).GetScreenshot().AsBase64EncodedString;
-                scenarioTest.Fail(scenarioContext.TestError.Message, MediaEntityBuilder.CreateScreenCaptureFromBase64String(screenshotEncoded).Build());
+                // var screenshotEncoded = ((ITakesScreenshot)webDriver).GetScreenshot().AsBase64EncodedString;
+                // scenarioTest.Fail(scenarioContext.TestError.Message, MediaEntityBuilder.CreateScreenCaptureFromBase64String(screenshotEncoded).Build());
             }
             else
             {
@@ -115,17 +115,17 @@ namespace TestAutomationProject.Core.Hooks
                 if (stepType == "Then")
                 {
                     //Allure Reporting
-                    byte[] successScreenshot = ((ITakesScreenshot)webDriver).GetScreenshot().AsByteArray;
-                    AllureLifecycle.Instance.AddAttachment("Success Screenshot", "image/png", successScreenshot);
+                    // byte[] successScreenshot = ((ITakesScreenshot)webDriver).GetScreenshot().AsByteArray;
+                    // AllureLifecycle.Instance.AddAttachment("Success Screenshot", "image/png", successScreenshot);
 
                     //Extend Reporting
-                    var screenshot = ((ITakesScreenshot)webDriver).GetScreenshot().AsBase64EncodedString;
-                    scenarioTest.Pass(scenarioContext.StepContext.StepInfo.Text,
-                        MediaEntityBuilder.CreateScreenCaptureFromBase64String(screenshot).Build());
+                    // var screenshot = ((ITakesScreenshot)webDriver).GetScreenshot().AsBase64EncodedString;
+                    // scenarioTest.Pass(scenarioContext.StepContext.StepInfo.Text,
+                    //     MediaEntityBuilder.CreateScreenCaptureFromBase64String(screenshot).Build());
                 }
                 else
                 {
-                    scenarioTest.Pass(scenarioContext.StepContext.StepInfo.Text);
+                    // scenarioTest.Pass(scenarioContext.StepContext.StepInfo.Text);
                 }
             }
         }
@@ -144,9 +144,9 @@ namespace TestAutomationProject.Core.Hooks
                 objectContainer.RegisterInstanceAs(webDriver);
             }
 
-            Log.Information("Selecting scenario {0} to run", context.ScenarioInfo.Title);
+            Serilog.Log.Information("Selecting scenario {0} to run", context.ScenarioInfo.Title);
 
-            scenarioTest = extent.CreateTest(context.ScenarioInfo.Title);
+            // scenarioTest = extent.CreateTest(context.ScenarioInfo.Title);
         }
 
         [AfterScenario]
@@ -158,20 +158,20 @@ namespace TestAutomationProject.Core.Hooks
                 objectContainer.Resolve<IWebDriver>().Dispose();
             }
 
-            if (scenarioContext.TestError != null)
-            {
-                scenarioTest.Fail(scenarioContext.TestError.Message);
-            }
-            else
-            {
-                scenarioTest.Pass("Scenario passed successfully.");
-            }
+            // if (scenarioContext.TestError != null)
+            // {
+            //     scenarioTest.Fail(scenarioContext.TestError.Message);
+            // }
+            // else
+            // {
+            //     scenarioTest.Pass("Scenario passed successfully.");
+            // }
         }
 
         [BeforeFeature]
         public static void BeforeFeature(FeatureContext context)
         {
-            Log.Information("Selecting feature file {0} to run", context.FeatureInfo.Title);
+            Serilog.Log.Information("Selecting feature file {0} to run", context.FeatureInfo.Title);
             randomText = DateTime.Now.ToString("yyMMddHHmmss");
         }
 
