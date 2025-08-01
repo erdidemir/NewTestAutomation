@@ -1,0 +1,23 @@
+trigger:
+- main
+
+parameters:
+  - name: environment
+    displayName: 'Test Ortamı'
+    type: string
+    default: 'QA'
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '8.x'
+
+- script: |
+    dotnet restore
+    dotnet build --configuration Release
+    dotnet test --configuration Release -- TestRunParameters.Parameter\(name=\"env\",value=\"$(environment)\"\)
+  displayName: 'Testleri Çalıştır' 
