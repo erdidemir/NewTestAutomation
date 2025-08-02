@@ -26,10 +26,9 @@ namespace TestAutomationProject.Core.Hooks
         private readonly ScenarioContext scenarioContext;
         private IWebDriver webDriver;
         private CommonPage _commonPage;
-        private static InteroperabilityPage _interoperabilityPage;
         private static string reportPath = System.IO.Directory.GetParent(@"../../../").FullName
-                                           + Path.DirectorySeparatorChar + "Result"
-                                           + Path.DirectorySeparatorChar + "Result_" +
+                                           + Path.DirectorySeparatorChar + (Configuration.ResultsFolder ?? "Results")
+                                           + Path.DirectorySeparatorChar + (Configuration.ReportPathBase ?? "Result") + "_" +
                                            DateTime.Now.ToString("ddMMyyyy HHmmss");
 
         public Hooks(IObjectContainer objectContainer, ScenarioContext scenarioContext)

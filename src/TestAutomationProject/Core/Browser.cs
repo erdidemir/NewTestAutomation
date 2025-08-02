@@ -9,6 +9,20 @@ namespace TestAutomationProject.Core
 {
     public static class Browser
     {
+        static Browser()
+        {
+            // Selenium Manager'ı tamamen devre dışı bırak
+            Environment.SetEnvironmentVariable("SELENIUM_MANAGER_DRIVER_PATH", "");
+            Environment.SetEnvironmentVariable("SELENIUM_MANAGER_BROWSER_PATH", "");
+            Environment.SetEnvironmentVariable("SELENIUM_MANAGER_DRIVER_PATH_CHROME", "");
+            Environment.SetEnvironmentVariable("SELENIUM_MANAGER_DRIVER_PATH_EDGE", "");
+            Environment.SetEnvironmentVariable("SELENIUM_MANAGER_DRIVER_PATH_FIREFOX", "");
+            Environment.SetEnvironmentVariable("SELENIUM_MANAGER_DRIVER_PATH_SAFARI", "");
+            
+            // Edge driver için özel ayarlar
+            Environment.SetEnvironmentVariable("SELENIUM_MANAGER_DRIVER_PATH_MICROSOFTEDGE", "");
+        }
+
         public static IWebDriver InitBrowser(string browserName)
         {
             return browserName.ToLower() switch
@@ -28,6 +42,9 @@ namespace TestAutomationProject.Core
             // En basit ayarlar
             options.AddArgument("--no-sandbox");
             options.AddArgument("--disable-dev-shm-usage");
+            options.AddArgument("--disable-gpu");
+            options.AddArgument("--disable-extensions");
+            options.AddArgument("--disable-plugins");
             
             if (Configuration.Headless)
             {
@@ -39,7 +56,11 @@ namespace TestAutomationProject.Core
             options.AddArgument("--disable-web-security");
             options.AddArgument("--disable-features=VizDisplayCompositor");
             
-            return new ChromeDriver(options);
+            // Chrome driver'ı manuel olarak yönet
+            var service = ChromeDriverService.CreateDefaultService();
+            service.HideCommandPromptWindow = true;
+            
+            return new ChromeDriver(service, options);
         }
 
         private static IWebDriver InitFirefoxDriver()
@@ -63,11 +84,30 @@ namespace TestAutomationProject.Core
             // Basit Edge ayarları
             options.AddArgument("--no-sandbox");
             options.AddArgument("--disable-dev-shm-usage");
+            options.AddArgument("--disable-gpu");
+            options.AddArgument("--disable-extensions");
+            options.AddArgument("--disable-plugins");
             
-            // Selenium Manager'ı devre dışı bırak
+            // Selenium Manager'ı tamamen devre dışı bırak
             options.AddArgument("--disable-selenium-manager");
+            options.AddArgument("--disable-web-security");
+            options.AddArgument("--disable-features=VizDisplayCompositor");
             
-            return new EdgeDriver(options);
+            // Edge driver'ı manuel olarak yönet - Selenium Manager'ı tamamen devre dışı bırak
+            var service = EdgeDriverService.CreateDefaultService();
+            service.HideCommandPromptWindow = true;
+            
+            // Edge driver'ı manuel olarak başlat
+            try
+            {
+                return new EdgeDriver(service, options);
+            }
+            catch (WebDriverException ex)
+            {
+                // Eğer Edge driver bulunamazsa, Chrome'a fallback yap
+                Console.WriteLine($"Edge driver bulunamadı, Chrome'a geçiliyor: {ex.Message}");
+                return InitChromeDriver();
+            }
         }
 
         private static IWebDriver InitSafariDriver()
