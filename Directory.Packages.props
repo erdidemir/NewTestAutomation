@@ -1,0 +1,34 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="BoDi" Version="1.5.0" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+    <PackageVersion Include="ExtentReports" Version="4.1.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="9.0.7" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="9.0.7" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="NUnit" Version="4.2.2" />
+    <PackageVersion Include="NUnit.Analyzers" Version="4.4.0" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
+    <PackageVersion Include="Selenium.Support" Version="4.10.0" />
+    <PackageVersion Include="Selenium.WebDriver" Version="4.10.0" />
+    <PackageVersion Include="Selenium.WebDriver.ChromeDriver" Version="114.0.5735.9000" />
+    <PackageVersion Include="Selenium.WebDriver.EdgeDriver" Version="3.14393.0.1" />
+    <PackageVersion Include="Selenium.WebDriver.GeckoDriver" Version="0.33.0" />
+    <PackageVersion Include="Selenium.WebDriver.MSEdgeDriver" Version="138.0.3351.55-pre" />
+    <PackageVersion Include="Selenium.WebDriver.MicrosoftDriver" Version="17.17134.0" />
+    <PackageVersion Include="SeleniumExtras.WaitHelpers" Version="1.0.2" />
+    <PackageVersion Include="Serilog" Version="3.1.1" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="7.0.0" />
+    <PackageVersion Include="Serilog.Extensions.Logging" Version="8.0.0" />
+    <PackageVersion Include="Serilog.Formatting.Compact" Version="2.0.0" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageVersion Include="SpecFlow.NUnit" Version="3.9.74" />
+    <PackageVersion Include="SpecFlow.Tools.MsBuild.Generation" Version="3.9.74" />
+    <PackageVersion Include="SpecFlow.Plus.LivingDocPlugin" Version="3.9.57" />
+    <PackageVersion Include="StackExchange.Redis" Version="2.7.33" />
+    <PackageVersion Include="stateless" Version="5.16.0" />
+  </ItemGroup>
+</Project> 

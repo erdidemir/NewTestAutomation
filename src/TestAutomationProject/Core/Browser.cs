@@ -9,110 +9,68 @@ namespace TestAutomationProject.Core
 {
     public static class Browser
     {
-        static Browser()
-        {
-            // Selenium Manager'ı tamamen devre dışı bırak
-            Environment.SetEnvironmentVariable("SELENIUM_MANAGER_DRIVER_PATH", "");
-            Environment.SetEnvironmentVariable("SELENIUM_MANAGER_BROWSER_PATH", "");
-            Environment.SetEnvironmentVariable("SELENIUM_MANAGER_DRIVER_PATH_CHROME", "");
-            Environment.SetEnvironmentVariable("SELENIUM_MANAGER_DRIVER_PATH_EDGE", "");
-            Environment.SetEnvironmentVariable("SELENIUM_MANAGER_DRIVER_PATH_FIREFOX", "");
-            Environment.SetEnvironmentVariable("SELENIUM_MANAGER_DRIVER_PATH_SAFARI", "");
-            
-            // Edge driver için özel ayarlar
-            Environment.SetEnvironmentVariable("SELENIUM_MANAGER_DRIVER_PATH_MICROSOFTEDGE", "");
-        }
-
         public static IWebDriver InitBrowser(string browserName)
         {
-            return browserName.ToLower() switch
+            IWebDriver driver;
+            
+            switch (browserName.ToLower())
             {
-                "chrome" => InitChromeDriver(),
-                "firefox" => InitFirefoxDriver(),
-                "edge" => InitEdgeDriver(),
-                "safari" => InitSafariDriver(),
-                _ => InitChromeDriver()
-            };
+                case "firefox":
+                    driver = new FirefoxDriver();
+                    break;
+                    
+                case "chrome":
+                    var chromeOptions = new ChromeOptions();
+                    if (Configuration.Headless)
+                    {
+                        chromeOptions.AddArgument("--headless");
+                    }
+                    chromeOptions.AddArguments("--ignore-certificate-errors");
+                    chromeOptions.AddArguments("--no-sandbox");
+                    chromeOptions.AddArguments("--disable-dev-shm-usage");
+                    driver = new ChromeDriver(chromeOptions);
+                    break;
+                    
+                case "edge":
+                    EdgeOptions edgeOptions = new EdgeOptions();
+                    edgeOptions.AddArguments("--ignore-certificate-errors");
+                    edgeOptions.AddArguments("--window-size=1920,1080");
+                    edgeOptions.AddArguments("inprivate");
+                    if (Configuration.Headless)
+                    {
+                        edgeOptions.AddArguments("--headless=new");
+                    }
+                    edgeOptions.AddUserProfilePreference("download.prompt_for_download", false);
+                    edgeOptions.AddUserProfilePreference("safebrowsing.enabled", true);
+                    driver = new EdgeDriver(edgeOptions);
+                    break;
+                    
+                case "safari":
+                    driver = new SafariDriver();
+                    break;
+                    
+                default:
+                    // Default olarak Chrome kullan
+                    var defaultChromeOptions = new ChromeOptions();
+                    if (Configuration.Headless)
+                    {
+                        defaultChromeOptions.AddArgument("--headless");
+                    }
+                    defaultChromeOptions.AddArguments("--ignore-certificate-errors");
+                    defaultChromeOptions.AddArguments("--no-sandbox");
+                    defaultChromeOptions.AddArguments("--disable-dev-shm-usage");
+                    driver = new ChromeDriver(defaultChromeOptions);
+                    break;
+            }
+            
+            ConfigureDriver(driver);
+            return driver;
         }
 
-        private static IWebDriver InitChromeDriver()
+        private static void ConfigureDriver(IWebDriver driver)
         {
-            var options = new ChromeOptions();
-            
-            // En basit ayarlar
-            options.AddArgument("--no-sandbox");
-            options.AddArgument("--disable-dev-shm-usage");
-            options.AddArgument("--disable-gpu");
-            options.AddArgument("--disable-extensions");
-            options.AddArgument("--disable-plugins");
-            
-            if (Configuration.Headless)
-            {
-                options.AddArgument("--headless");
-            }
-            
-            // Selenium Manager'ı tamamen devre dışı bırak
-            options.AddArgument("--disable-selenium-manager");
-            options.AddArgument("--disable-web-security");
-            options.AddArgument("--disable-features=VizDisplayCompositor");
-            
-            // Chrome driver'ı manuel olarak yönet
-            var service = ChromeDriverService.CreateDefaultService();
-            service.HideCommandPromptWindow = true;
-            
-            return new ChromeDriver(service, options);
-        }
-
-        private static IWebDriver InitFirefoxDriver()
-        {
-            var options = new FirefoxOptions();
-            if (Configuration.Headless)
-            {
-                options.AddArgument("--headless");
-            }
-            return new FirefoxDriver(options);
-        }
-
-        private static IWebDriver InitEdgeDriver()
-        {
-            var options = new EdgeOptions();
-            if (Configuration.Headless)
-            {
-                options.AddArgument("--headless");
-            }
-            
-            // Basit Edge ayarları
-            options.AddArgument("--no-sandbox");
-            options.AddArgument("--disable-dev-shm-usage");
-            options.AddArgument("--disable-gpu");
-            options.AddArgument("--disable-extensions");
-            options.AddArgument("--disable-plugins");
-            
-            // Selenium Manager'ı tamamen devre dışı bırak
-            options.AddArgument("--disable-selenium-manager");
-            options.AddArgument("--disable-web-security");
-            options.AddArgument("--disable-features=VizDisplayCompositor");
-            
-            // Edge driver'ı manuel olarak yönet - Selenium Manager'ı tamamen devre dışı bırak
-            var service = EdgeDriverService.CreateDefaultService();
-            service.HideCommandPromptWindow = true;
-            
-            // Edge driver'ı manuel olarak başlat
-            try
-            {
-                return new EdgeDriver(service, options);
-            }
-            catch (WebDriverException ex)
-            {
-                // Eğer Edge driver bulunamazsa, Chrome'a fallback yap
-                Console.WriteLine($"Edge driver bulunamadı, Chrome'a geçiliyor: {ex.Message}");
-                return InitChromeDriver();
-            }
-        }
-
-        private static IWebDriver InitSafariDriver()
-        {
-            return new SafariDriver();
+            driver.Manage().Window.Size = new Size(1920, 1080);
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(Configuration.ElementDelayMilliSeconds / 1000);
         }
     }
 } 
