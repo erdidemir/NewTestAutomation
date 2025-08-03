@@ -33,6 +33,17 @@ namespace TestAutomationProject.Core
         public static string ReportPathBase => _config["Configuration:ReportPathBase"];
         public static string ResultsFolder => _config["Configuration:ResultsFolder"] ?? "Results";
 
+        // Screenshot Settings
+        public static bool TakeScreenshotOnSuccess => bool.TryParse(_config["Configuration:ScreenshotSettings:TakeScreenshotOnSuccess"], out var val) && val;
+        public static bool TakeScreenshotOnFailure => bool.TryParse(_config["Configuration:ScreenshotSettings:TakeScreenshotOnFailure"], out var val) && val;
+        public static string ScreenshotFormat => _config["Configuration:ScreenshotSettings:ScreenshotFormat"] ?? "png";
+        public static int ScreenshotQuality => int.TryParse(_config["Configuration:ScreenshotSettings:ScreenshotQuality"], out var val) ? val : 90;
+
+        // Allure Settings
+        public static bool GenerateAllureReport => bool.TryParse(_config["Configuration:AllureSettings:GenerateAllureReport"], out var val) && val;
+        public static string AllureResultsPath => _config["Configuration:AllureSettings:AllureResultsPath"] ?? "allure-results";
+        public static string AllureReportPath => _config["Configuration:AllureSettings:AllureReportPath"] ?? "allure-report";
+
         public static class UITestUsers
         {
             public static (string username, string password) Anonymous =>
@@ -41,8 +52,8 @@ namespace TestAutomationProject.Core
             public static (string username, string password) AuthenticatedOnly =>
                 (_config["Configuration:UITestUsers:AuthenticatedOnly:Username"], _config["Configuration:UITestUsers:AuthenticatedOnly:Password"]);
 
-            public static (string username, string password) SiteAdmin =>
-                (_config["Configuration:UITestUsers:SiteAdmin:Username"], _config["Configuration:UITestUsers:SiteAdmin:Password"]);
+            public static (string username, string password) Admin =>
+                (_config["Configuration:UITestUsers:Admin:Username"], _config["Configuration:UITestUsers:Admin:Password"]);
         }
     }
 }

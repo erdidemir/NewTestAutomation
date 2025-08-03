@@ -42,6 +42,9 @@ TestAutomationProject/
 - **Safari** - SafariDriver desteği
 
 ### Raporlama & Logging
+- **Allure.Commons 3.5.0.73** - Gelişmiş raporlama
+- **Allure.NUnit 2.10.0** - NUnit entegrasyonu
+- **SpecFlow.Allure 3.5.0.73** - SpecFlow entegrasyonu
 - **Serilog 3.1.1** - Gelişmiş loglama
 - **ExtentReports 4.1.0** - HTML raporlama
 - **Merkezi Paket Yönetimi** - Directory.Packages.props
@@ -64,7 +67,18 @@ TestAutomationProject/
     "BaseUrl": "https://www.google.com",
     "ElementDelayMilliSeconds": 5000,
     "ReportPathBase": "Result",
-    "ResultsFolder": "Results"
+    "ResultsFolder": "Results",
+    "ScreenshotSettings": {
+      "TakeScreenshotOnSuccess": true,
+      "TakeScreenshotOnFailure": true,
+      "ScreenshotFormat": "png",
+      "ScreenshotQuality": 90
+    },
+    "AllureSettings": {
+      "GenerateAllureReport": true,
+      "AllureResultsPath": "allure-results",
+      "AllureReportPath": "allure-report"
+    }
   }
 }
 ```
@@ -126,11 +140,12 @@ Feature: Google Login Testleri
 - **Page Object Model** - Sürdürülebilir test yapısı
 - **Centralized Package Management** - Merkezi paket yönetimi
 - **Comprehensive Logging** - Serilog ile detaylı loglama
+- **Allure Reporting** - Gelişmiş raporlama sistemi
 - **HTML Reporting** - ExtentReports ile görsel raporlar
 - **Configuration Management** - JSON tabanlı konfigürasyon
 - **Dependency Injection** - BoDi ile DI container
 - **Explicit Waits** - Güvenilir element bekleme
-- **Screenshot Support** - Hata durumunda otomatik screenshot
+- **Automatic Screenshots** - Başarılı/başarısız testlerde otomatik screenshot
 - **Cross-Platform** - Windows, macOS, Linux desteği
 
 ### 🔄 Test Lifecycle
@@ -138,10 +153,10 @@ Feature: Google Login Testleri
 2. **BeforeFeature** - Feature başlangıcı
 3. **BeforeScenario** - Senaryo başlangıcı
 4. **BeforeStep** - Step başlangıcı
-5. **AfterStep** - Step sonu
+5. **AfterStep** - Step sonu (Screenshot alma)
 6. **AfterScenario** - Senaryo sonu
 7. **AfterFeature** - Feature sonu
-8. **AfterTestRun** - Test suite sonu
+8. **AfterTestRun** - Test suite sonu (Allure raporu oluşturma)
 
 ## 🚀 Kullanım
 
@@ -158,6 +173,18 @@ dotnet test --logger "console;verbosity=detailed"
 
 # Paralel çalıştır
 dotnet test --logger "console;verbosity=detailed" --verbosity normal
+```
+
+### Allure Raporu Görüntüleme
+```bash
+# Allure raporu oluştur
+allure generate allure-results --clean
+
+# Allure raporu görüntüle
+allure serve allure-results
+
+# Allure raporu aç
+allure open allure-report
 ```
 
 ### Proje Yönetimi
@@ -177,11 +204,20 @@ dotnet test --collect:"XPlat Code Coverage"
 
 ## 📊 Raporlama
 
-### ExtentReports
-- HTML tabanlı görsel raporlar
-- Test sonuçları ve istatistikler
-- Screenshot entegrasyonu
-- Timeline ve trend analizi
+### Allure Reports
+- **Gelişmiş HTML Raporlar** - Interaktif ve detaylı raporlar
+- **Test Sonuçları** - Başarılı/başarısız test istatistikleri
+- **Screenshot Entegrasyonu** - Otomatik screenshot'lar
+- **Timeline ve Trend Analizi** - Test performans analizi
+- **Environment Bilgileri** - Sistem ve tarayıcı bilgileri
+- **Test Kategorileri** - Tag bazlı test gruplandırma
+
+### Screenshot Özellikleri
+- **Başarılı Test Screenshot'ları** - Konfigürasyon ile kontrol edilebilir
+- **Başarısız Test Screenshot'ları** - Otomatik hata görselleştirme
+- **Timestamp'li Dosya Adları** - Benzersiz dosya isimlendirme
+- **Allure Entegrasyonu** - Raporlarda otomatik görüntüleme
+- **Çoklu Format Desteği** - PNG, JPEG formatları
 
 ### Serilog Logging
 - Yapılandırılmış loglama
@@ -248,11 +284,17 @@ dotnet test --collect:"XPlat Code Coverage"
    - Network bağlantısını kontrol et
    - Headless modu dene
 
+4. **Allure raporu oluşturulamadı**
+   - Allure CLI'ın yüklü olduğunu kontrol et
+   - Java runtime'ın mevcut olduğunu doğrula
+   - Allure results klasörünün var olduğunu kontrol et
+
 ### Debug İpuçları
 - `Headless: false` ile görsel debug
 - Screenshot'ları kontrol et
 - Log dosyalarını incele
 - Browser console'u kontrol et
+- Allure raporlarını incele
 
 ## 📈 Performans
 
@@ -261,12 +303,14 @@ dotnet test --collect:"XPlat Code Coverage"
 - **Headless Mode** - Görsel olmayan mod
 - **Driver Reuse** - Driver yeniden kullanımı
 - **Smart Waits** - Akıllı bekleme stratejileri
+- **Screenshot Optimizasyonu** - Sadece gerekli durumlarda screenshot
 
 ### Best Practices
 - Page Object Model kullan
 - Explicit wait tercih et
 - Screenshot'ları optimize et
 - Log seviyelerini ayarla
+- Allure raporlarını düzenli kontrol et
 
 ## 🔒 Güvenlik
 
@@ -289,6 +333,21 @@ dotnet test --collect:"XPlat Code Coverage"
 - [SpecFlow](https://specflow.org/)
 - [NUnit](https://nunit.org/)
 - [Serilog](https://serilog.net/)
+- [Allure Framework](https://allure.qameta.io/)
+
+### Allure Kurulumu
+```bash
+# Windows (Chocolatey)
+choco install allure
+
+# macOS (Homebrew)
+brew install allure
+
+# Linux
+sudo apt-add-repository ppa:qameta/allure
+sudo apt-get update
+sudo apt-get install allure
+```
 
 ### Örnekler
 - Feature dosyaları: `Features/`
@@ -300,4 +359,4 @@ dotnet test --collect:"XPlat Code Coverage"
 
 **Proje Versiyonu:** 1.0.0  
 **Son Güncelleme:** 2024  
-**Teknoloji:** .NET 9, Selenium 4, SpecFlow 3.9.74 
+**Teknoloji:** .NET 9, Selenium 4, SpecFlow 3.9.74, Allure 3.5.0 

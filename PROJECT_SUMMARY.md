@@ -16,6 +16,7 @@ Modern web uygulamaları için geliştirilmiş kapsamlı test otomasyonu çözü
 - **Selenium WebDriver 4.10.0** - Web otomasyon
 - **SpecFlow 3.9.74** - BDD framework
 - **NUnit 4** - Test framework
+- **Allure.Commons 3.5.0.73** - Gelişmiş raporlama
 - **Serilog 3.1.1** - Loglama
 - **ExtentReports 4.1.0** - HTML raporlama
 
@@ -37,11 +38,12 @@ Modern web uygulamaları için geliştirilmiş kapsamlı test otomasyonu çözü
 - **Page Object Model** - Sürdürülebilir test yapısı
 - **Centralized Package Management** - Merkezi paket yönetimi
 - **Comprehensive Logging** - Serilog ile detaylı loglama
+- **Allure Reporting** - Gelişmiş raporlama sistemi
 - **HTML Reporting** - ExtentReports ile görsel raporlar
 - **Configuration Management** - JSON tabanlı konfigürasyon
 - **Dependency Injection** - BoDi ile DI container
 - **Explicit Waits** - Güvenilir element bekleme
-- **Screenshot Support** - Hata durumunda otomatik screenshot
+- **Automatic Screenshots** - Başarılı/başarısız testlerde otomatik screenshot
 - **Cross-Platform** - Windows, macOS, Linux desteği
 
 ## 🚀 Kullanım
@@ -58,6 +60,15 @@ dotnet test --filter "Category=Smoke"
 dotnet test --logger "console;verbosity=detailed"
 ```
 
+### Allure Raporu
+```bash
+# Allure raporu oluştur
+allure generate allure-results --clean
+
+# Allure raporu görüntüle
+allure serve allure-results
+```
+
 ### Konfigürasyon
 ```json
 {
@@ -65,7 +76,18 @@ dotnet test --logger "console;verbosity=detailed"
     "Browser": "edge",
     "Headless": false,
     "BaseUrl": "https://www.google.com",
-    "ElementDelayMilliSeconds": 5000
+    "ElementDelayMilliSeconds": 5000,
+    "ScreenshotSettings": {
+      "TakeScreenshotOnSuccess": true,
+      "TakeScreenshotOnFailure": true,
+      "ScreenshotFormat": "png",
+      "ScreenshotQuality": 90
+    },
+    "AllureSettings": {
+      "GenerateAllureReport": true,
+      "AllureResultsPath": "allure-results",
+      "AllureReportPath": "allure-report"
+    }
   }
 }
 ```
@@ -84,11 +106,20 @@ dotnet test --logger "console;verbosity=detailed"
 
 ## 📈 Raporlama
 
-### ExtentReports
-- HTML tabanlı görsel raporlar
-- Test sonuçları ve istatistikler
-- Screenshot entegrasyonu
-- Timeline ve trend analizi
+### Allure Reports
+- **Gelişmiş HTML Raporlar** - Interaktif ve detaylı raporlar
+- **Test Sonuçları** - Başarılı/başarısız test istatistikleri
+- **Screenshot Entegrasyonu** - Otomatik screenshot'lar
+- **Timeline ve Trend Analizi** - Test performans analizi
+- **Environment Bilgileri** - Sistem ve tarayıcı bilgileri
+- **Test Kategorileri** - Tag bazlı test gruplandırma
+
+### Screenshot Özellikleri
+- **Başarılı Test Screenshot'ları** - Konfigürasyon ile kontrol edilebilir
+- **Başarısız Test Screenshot'ları** - Otomatik hata görselleştirme
+- **Timestamp'li Dosya Adları** - Benzersiz dosya isimlendirme
+- **Allure Entegrasyonu** - Raporlarda otomatik görüntüleme
+- **Çoklu Format Desteği** - PNG, JPEG formatları
 
 ### Serilog
 - Yapılandırılmış loglama
@@ -115,11 +146,13 @@ dotnet test --logger "console;verbosity=detailed"
 - **Element bulunamadı** → Locator'ları kontrol et
 - **Driver başlatılamadı** → Driver versiyonunu kontrol et  
 - **Test timeout** → Bekleme sürelerini artır
+- **Allure raporu oluşturulamadı** → Allure CLI'ı kontrol et
 
 ### Debug İpuçları
 - `Headless: false` ile görsel debug
 - Screenshot'ları kontrol et
 - Log dosyalarını incele
+- Allure raporlarını incele
 
 ## 📚 Teknik Detaylar
 
@@ -140,8 +173,22 @@ TestAutomationProject/
 - **Versiyon Kontrolü** - Tüm paketler merkezi olarak yönetiliyor
 - **Dependency Injection** - BoDi container kullanılıyor
 
+### Allure Kurulumu
+```bash
+# Windows (Chocolatey)
+choco install allure
+
+# macOS (Homebrew)
+brew install allure
+
+# Linux
+sudo apt-add-repository ppa:qameta/allure
+sudo apt-get update
+sudo apt-get install allure
+```
+
 ---
 
 **Versiyon:** 1.0.0  
-**Teknoloji:** .NET 9, Selenium 4, SpecFlow 3.9.74  
+**Teknoloji:** .NET 9, Selenium 4, SpecFlow 3.9.74, Allure 3.5.0  
 **Durum:** ✅ Production Ready 

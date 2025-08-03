@@ -28,6 +28,7 @@ namespace TestAutomationProject.Core.Hooks
                                            + Path.DirectorySeparatorChar + (Configuration.ResultsFolder ?? "Results")
                                            + Path.DirectorySeparatorChar + (Configuration.ReportPathBase ?? "Result") + "_" +
                                            DateTime.Now.ToString("ddMMyyyy HHmmss");
+        private static string extentReportPath = Path.Combine(Directory.GetCurrentDirectory(), "Results", "index.html");
 
         public Hooks(IObjectContainer objectContainer, ScenarioContext scenarioContext)
         {
@@ -38,6 +39,21 @@ namespace TestAutomationProject.Core.Hooks
         [BeforeTestRun]
         public static void BeforeTestRun()
         {
+            // Ensure Results directory exists
+            var resultsDir = Path.Combine(Directory.GetCurrentDirectory(), "Results");
+            if (!Directory.Exists(resultsDir))
+            {
+                Directory.CreateDirectory(resultsDir);
+            }
+
+            // ExtentReports setup
+            var htmlReporter = new ExtentHtmlReporter(extentReportPath);
+            htmlReporter.Config.Theme = AventStack.ExtentReports.Reporter.Configuration.Theme.Dark;
+            extent = new ExtentReports();
+            extent.AttachReporter(htmlReporter);
+
+            Serilog.Log.Information("ExtentReport will be saved to: {0}", extentReportPath);
+
             LoggingLevelSwitch levelSwitch = new LoggingLevelSwitch(Serilog.Events.LogEventLevel.Debug);
             Serilog.Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.ControlledBy(levelSwitch)
@@ -49,33 +65,39 @@ namespace TestAutomationProject.Core.Hooks
         [AfterTestRun]
         public static void AfterTestRun()
         {
-            // Finalizing and saving report  
-            // extent.Flush();
-        }
-
-        [BeforeStep]
-        public void BeforeStep()
-        {
-            List<IWebElement> e = new List<IWebElement>();
-            string errorMessage = "Error Message";
             try
             {
-                webDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1);
-                var GetErrorMessageElement =
-                    webDriver.FindElement(
-                        By.XPath($"(//*[@id='toast-container']/div/div[text()=' Error '])[1]"));
-                e.Add(GetErrorMessageElement);
-
-                var GetErrorMessageElementErrorMessage = webDriver.FindElement(By.XPath($"(//*[@id='toast-container']/div/div[text()=' Error '])[1]/following-sibling::div"));
-                errorMessage = GetErrorMessageElementErrorMessage.Text;
+                if (extent != null)
+                {
+                    extent.Flush();
+                    Serilog.Log.Information("ExtentReport flushed to: {0}", extentReportPath);
+                    
+                    // Check if file was actually created
+                    if (File.Exists(extentReportPath))
+                    {
+                        Serilog.Log.Information("ExtentReport file created successfully at: {0}", extentReportPath);
+                        
+                        // Copy to Results folder for easier access
+                        var resultsPath = Path.Combine(Directory.GetCurrentDirectory(), "Results", "index.html");
+                        if (File.Exists(extentReportPath))
+                        {
+                            File.Copy(extentReportPath, resultsPath, true);
+                            Serilog.Log.Information("ExtentReport copied to: {0}", resultsPath);
+                        }
+                    }
+                    else
+                    {
+                        Serilog.Log.Warning("ExtentReport file was not created at: {0}", extentReportPath);
+                    }
+                }
+                else
+                {
+                    Serilog.Log.Warning("ExtentReports object is null, cannot flush report");
+                }
             }
-            catch
+            catch (Exception ex)
             {
-            }
-
-            if (e.Count > 0)
-            {
-                // Screenshot logic removed for now
+                Serilog.Log.Error("Error flushing ExtentReport: {0}", ex.Message);
             }
         }
 
@@ -85,14 +107,23 @@ namespace TestAutomationProject.Core.Hooks
             if (context.TestError != null)
             {
                 Serilog.Log.Error("Test Step Failed | {0}", context.TestError.Message);
+                if (Configuration.TakeScreenshotOnFailure)
+                {
+                    var screenshotPath = TakeScreenshot("Failure_Screenshot", context.TestError.Message);
+                    scenarioTest.Fail(context.TestError.Message, MediaEntityBuilder.CreateScreenCaptureFromPath(screenshotPath).Build());
+                }
             }
             else
             {
                 var stepType = scenarioContext.StepContext.StepInfo.StepDefinitionType.ToString();
-
-                if (stepType == "Then")
+                if (stepType == "Then" && Configuration.TakeScreenshotOnSuccess)
                 {
-                    // Success screenshot logic removed for now
+                    var screenshotPath = TakeScreenshot("Success_Screenshot", "Step completed successfully");
+                    scenarioTest.Pass(scenarioContext.StepContext.StepInfo.Text, MediaEntityBuilder.CreateScreenCaptureFromPath(screenshotPath).Build());
+                }
+                else
+                {
+                    scenarioTest.Pass(scenarioContext.StepContext.StepInfo.Text);
                 }
             }
         }
@@ -112,6 +143,9 @@ namespace TestAutomationProject.Core.Hooks
             }
 
             Serilog.Log.Information("Selecting scenario {0} to run", context.ScenarioInfo.Title);
+
+            // ExtentReports scenario
+            scenarioTest = extent.CreateTest(context.ScenarioInfo.Title);
         }
 
         [AfterScenario]
@@ -135,6 +169,29 @@ namespace TestAutomationProject.Core.Hooks
         public static void CloseLogger()
         {
             // Logger.Instance.Close();
+        }
+
+        private string TakeScreenshot(string screenshotName, string description)
+        {
+            try
+            {
+                if (webDriver != null)
+                {
+                    var screenshot = ((ITakesScreenshot)webDriver).GetScreenshot();
+                    var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                    var fileName = $"{screenshotName}_{timestamp}.{Configuration.ScreenshotFormat}";
+                    var screenshotPath = Path.Combine(reportPath, "Screenshots", fileName);
+                    Directory.CreateDirectory(Path.GetDirectoryName(screenshotPath));
+                    screenshot.SaveAsFile(screenshotPath, ScreenshotImageFormat.Png);
+                    Serilog.Log.Information("Screenshot saved: {0}", screenshotPath);
+                    return screenshotPath;
+                }
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Error("Error taking screenshot: {0}", ex.Message);
+            }
+            return null;
         }
     }
 }
