@@ -1,197 +1,226 @@
-# Google Login Test Otomasyonu
+# Test Automation Project
 
-Bu proje, Google login sayfası için Selenium WebDriver kullanarak test otomasyonu sağlar.
+Modern web uygulamaları için geliştirilmiş kapsamlı test otomasyonu çözümü. Clean Architecture prensipleri kullanılarak tasarlanmış, çoklu tarayıcı desteği, gelişmiş raporlama ve performans monitoring özellikleri içerir.
 
-## Özellikler
+## 🚀 Yeni Özellikler
 
-- **Edge ve Chrome** tarayıcı desteği
-- **SpecFlow** ile BDD (Behavior Driven Development) yaklaşımı
-- **NUnit 4** test framework'ü
-- **Allure** raporlama
-- **Serilog** loglama
-- **.NET 9** uyumluluğu
+### 📊 Performans Monitoring Sistemi
+- **Gerçek Zamanlı Metrikler**: CPU, Memory, Thread kullanımı
+- **İşlem Süreleri**: Browser başlatma, sayfa yükleme, element etkileşimi
+- **Yavaş İşlem Tespiti**: Konfigüre edilebilir threshold değerleri
+- **Performans Raporları**: JSON formatında detaylı raporlar
+- **Trend Analizi**: Zaman içinde performans değişimleri
 
-## Kurulum
+### 🔄 Otomatik Driver Güncelleme
+- **Chrome Driver**: Otomatik versiyon kontrolü ve güncelleme
+- **Edge Driver**: Otomatik versiyon kontrolü ve güncelleme
+- **Uyumluluk Kontrolü**: Browser-Driver versiyon uyumluluğu
+- **Güvenli Güncelleme**: Hata durumunda geri alma
+- **Konfigürasyon**: Güncelleme sıklığı ve timeout ayarları
 
-### Gereksinimler
-- .NET 9 SDK
-- Edge veya Chrome tarayıcısı
-- Visual Studio 2022 veya VS Code
+### 🎯 Gelişmiş Browser Optimizasyonu
+- **Performans Ayarları**: GPU, extensions, plugins devre dışı
+- **Memory Optimizasyonu**: Bellek kullanımı optimizasyonu
+- **Hızlı Başlatma**: Optimize edilmiş browser konfigürasyonu
+- **Stabilite**: Kararlı test çalıştırma
 
-### Paketler
-Proje aşağıdaki NuGet paketlerini kullanır:
-- Selenium.WebDriver (4.34.0)
-- Selenium.WebDriver.EdgeDriver (3.14393.0.1)
-- Selenium.WebDriver.ChromeDriver (138.0.7204.18300)
-- SeleniumExtras.WaitHelpers (1.0.2)
-- SpecFlow.NUnit (3.9.74)
-- NUnit (4.2.2)
-- Allure.Commons (3.5.0.73)
-- Serilog (3.1.1)
+## 🏗️ Mimari
 
-## Konfigürasyon
+### Clean Architecture
+- **Domain Layer** (Core/) - İş mantığı ve konfigürasyon
+- **Application Layer** (Pages/) - Sayfa nesneleri ve işlemler  
+- **Infrastructure Layer** (StepDefinitions/) - Test implementasyonları
 
-### appsettings.json
+### Teknoloji Stack
+- **.NET 9** - Modern .NET platformu
+- **Selenium WebDriver 4.10.0** - Web otomasyon
+- **SpecFlow 3.9.74** - BDD framework
+- **NUnit 4** - Test framework
+- **Allure.Commons 3.5.0.73** - Gelişmiş raporlama
+- **Serilog 3.1.1** - Loglama
+- **ExtentReports 4.1.0** - HTML raporlama
+
+## 🌐 Tarayıcı Desteği
+
+| Tarayıcı | Driver | Versiyon | Durum | Otomatik Güncelleme |
+|-----------|--------|----------|-------|-------------------|
+| **Microsoft Edge** | EdgeDriver | 3.14393.0.1 | ✅ Aktif | ✅ Destekleniyor |
+| **Google Chrome** | ChromeDriver | 114.0.5735.9000 | ✅ Aktif | ✅ Destekleniyor |
+| **Mozilla Firefox** | GeckoDriver | 0.33.0 | ✅ Aktif | ⚠️ Manuel |
+| **Safari** | SafariDriver | - | ✅ Aktif | ⚠️ Manuel |
+
+## 📊 Performans Özellikleri
+
+### ✅ Mevcut
+- **Gerçek Zamanlı Monitoring** - CPU, Memory, Thread takibi
+- **İşlem Süresi Ölçümü** - Browser, sayfa, element işlemleri
+- **Yavaş İşlem Tespiti** - Konfigüre edilebilir threshold
+- **Performans Raporları** - JSON formatında detaylı raporlar
+- **Memory Sızıntısı Kontrolü** - Bellek kullanımı izleme
+- **Trend Analizi** - Zaman içinde performans değişimleri
+
+### 🔧 Konfigürasyon
 ```json
 {
-  "Configuration": {
-    "Browser": "edge",
-    "Headless": false,
-    "BaseUrl": "https://accounts.google.com",
-    "ElementDelayMilliSeconds": 5000
+  "PerformanceSettings": {
+    "EnablePerformanceMonitoring": true,
+    "GeneratePerformanceReport": true,
+    "LogSlowOperations": true,
+    "SlowOperationThresholdMs": 5000,
+    "MemoryWarningThresholdMB": 1000,
+    "CpuWarningThresholdMs": 10000
+  },
+  "DriverSettings": {
+    "AutoUpdateDrivers": true,
+    "CheckDriverCompatibility": true,
+    "DriverUpdateIntervalDays": 7,
+    "DriverDownloadTimeoutSeconds": 300,
+    "EnableDriverLogging": true
   }
 }
 ```
 
-## Test Senaryoları
+## 🚀 Kullanım
 
-### Google Login Testleri
-1. **Başarılı Google Login** - Geçerli kullanıcı bilgileriyle giriş
-2. **Geçersiz Email** - Var olmayan email ile giriş denemesi
-3. **Geçersiz Şifre** - Yanlış şifre ile giriş denemesi
-4. **Test Başlatma** - Sayfa yükleme kontrolü
-
-## Test Çalıştırma
-
-### Tüm Testleri Çalıştırma
+### Test Çalıştırma
 ```bash
+# Tüm testler
 dotnet test
+
+# Performans testleri
+dotnet test --filter "Category=Performance"
+
+# Browser performans testleri
+dotnet test --filter "Category=BrowserPerformance"
+
+# Driver güncelleme testleri
+dotnet test --filter "Category=DriverUpdate"
 ```
 
-### Belirli Tag ile Test Çalıştırma
+### Performans Raporu
 ```bash
-dotnet test --filter "Category=Smoke"
-dotnet test --filter "Category=Positive"
-dotnet test --filter "Category=Negative"
+# Performans raporu oluştur
+dotnet test --filter "Category=Performance"
+
+# Raporu görüntüle
+# Results/performance-report.json dosyasını kontrol et
 ```
 
-### Belirli Test Dosyasını Çalıştırma
+### Driver Güncelleme
 ```bash
-dotnet test --filter "FullyQualifiedName~GoogleLogin"
+# Manuel driver güncelleme
+# Chrome için
+dotnet test --filter "Category=DriverUpdate" --filter "TestName=ChromeDriverUpdate"
+
+# Edge için
+dotnet test --filter "Category=DriverUpdate" --filter "TestName=EdgeDriverUpdate"
 ```
 
-## SpecFlow Feature Dosyası
+## 📈 Performans Metrikleri
 
-### GoogleLogin.feature
-```gherkin
-@GoogleLogin
-Feature: Google Login Testleri
-  Kullanıcı olarak Google hesabıma giriş yapabilmek istiyorum
-  Böylece Google servislerini kullanabilirim
+### İzlenen Metrikler
+- **Browser Başlatma Süresi**: Tarayıcı başlatma performansı
+- **Sayfa Yükleme Süresi**: Web sayfalarının yüklenme hızı
+- **Element Bulma Süresi**: DOM elementlerinin bulunma hızı
+- **Element Etkileşim Süresi**: Click, type gibi işlemlerin hızı
+- **Memory Kullanımı**: Bellek tüketimi ve sızıntı kontrolü
+- **CPU Kullanımı**: İşlemci kullanım oranı
+- **Thread Sayısı**: Aktif thread sayısı
 
-  Background:
-    Given kullanıcı test için hazır
-    And kullanıcı Google login sayfasında
+### Raporlama
+- **JSON Raporları**: Detaylı performans metrikleri
+- **Console Logları**: Gerçek zamanlı performans bilgileri
+- **Allure Entegrasyonu**: Performans verilerinin Allure'da görüntülenmesi
+- **Trend Analizi**: Zaman içinde performans değişimleri
 
-  @Positive @Smoke
-  Scenario: Başarılı Google Login
-    When kullanıcı email adresini girer: "testuser@gmail.com"
-    And kullanıcı email sonrası Next butonuna tıklar
-    And kullanıcı şifresini girer: "testpassword123"
-    And kullanıcı şifre sonrası Next butonuna tıklar
-    Then Google logosu görünür olmalı
-```
+## 🔧 Geliştirme
 
-## Step Definitions
+### Yeni Performans Testi Ekleme
+1. **Feature dosyası oluştur** (`Features/PerformanceTest.feature`)
+2. **Step definitions yaz** (`StepDefinitions/PerformanceSteps.cs`)
+3. **Performans metrikleri ekle** (`PerformanceHelper.cs`)
+4. **Test çalıştır**
 
-### GoogleLoginSteps.cs
-- `GivenKullaniciGoogleLoginSayfasinda()` - Google login sayfasına gitme
-- `WhenKullaniciEmailAdresiniGirer(string email)` - Email girme
-- `WhenKullaniciSifresiniGirer(string password)` - Şifre girme
-- `ThenGoogleLogosuGorunurOlmali()` - Logo kontrolü
-- `WhenTestiBaslat()` - Test başlatma
+### Driver Güncelleme Sistemi
+1. **DriverManager.cs** - Otomatik güncelleme mantığı
+2. **EnhancedBrowser.cs** - Gelişmiş browser yönetimi
+3. **Configuration.cs** - Driver ayarları
+4. **Hooks.cs** - Test lifecycle entegrasyonu
 
-## Page Object Model
+## 🐛 Sorun Giderme
 
-### LoginPage.cs
-- `NavigateToGoogleLogin()` - Google login sayfasına gitme
-- `EnterEmail(string email)` - Email girme
-- `EnterPassword(string password)` - Şifre girme
-- `LoginToGoogle(string email, string password)` - Tam login akışı
-- `GetErrorMessage()` - Hata mesajı alma
-- `IsGoogleLogoVisible()` - Logo görünürlük kontrolü
+### Performans Sorunları
+- **Yavaş Browser Başlatma** → Driver güncelleme kontrolü yap
+- **Yüksek Memory Kullanımı** → Browser optimizasyonları kontrol et
+- **Yavaş Element İşlemleri** → Locator stratejilerini gözden geçir
+- **Timeout Hataları** → Bekleme sürelerini artır
 
-### CommonPage.cs
-- `WaitForPageLoad()` - Sayfa yükleme bekleme
-- `WaitUntilElementVisible(By by)` - Element görünürlük bekleme
-- `WaitAndClick(By by)` - Bekleyip tıklama
-- `WaitAndSendKeys(By by, string text)` - Bekleyip metin gönderme
-- `ClickWithJavaScript(By by)` - JavaScript ile tıklama
-- `ScrollToElement(By by)` - Elemente kaydırma
-
-## Tarayıcı Konfigürasyonu
-
-### Edge Tarayıcısı
-- Otomasyon algılama bypass
-- Performance optimizasyonları
-- Güncel user agent
-- Güvenlik ayarları
-
-### Chrome Tarayıcısı
-- Otomasyon algılama bypass
-- Performance optimizasyonları
-- Güncel user agent
-- Güvenlik ayarları
-
-## Raporlama
-
-### Allure Raporları
-- Test sonuçları
-- Screenshot'lar
-- Log'lar
-- Performance metrikleri
-
-### Serilog Logları
-- Detaylı loglama
-- Dosya bazlı loglama
-- Timestamp'li loglar
-
-## Proje Yapısı
-
-```
-TestAutomationProject/
-├── Core/
-│   ├── Browser.cs
-│   ├── Configuration.cs
-│   └── Hooks/
-│       └── Hooks.cs
-├── Pages/
-│   ├── CommonPage.cs
-│   ├── LoginPage.cs
-│   └── InteroperabilityPage.cs
-├── StepDefinitions/
-│   └── GoogleLoginSteps.cs
-├── Features/
-│   └── GoogleLogin.feature
-├── Models/
-├── Helpers/
-└── Results/
-```
-
-## Geliştirme
-
-### Yeni Test Ekleme
-1. Feature dosyası oluştur
-2. Step definitions yaz
-3. Page object metodları ekle
-4. Test çalıştır
-
-### Yeni Sayfa Ekleme
-1. Page sınıfı oluştur
-2. Element locator'ları tanımla
-3. Sayfa metodları yaz
-4. Test'lerde kullan
-
-## Sorun Giderme
-
-### Yaygın Sorunlar
-1. **Element bulunamadı** - Locator'ları kontrol et
-2. **Timeout hatası** - Bekleme sürelerini artır
-3. **Tarayıcı başlatılamadı** - Driver versiyonunu kontrol et
-4. **Test başarısız** - Assert mesajlarını kontrol et
+### Driver Sorunları
+- **Driver Uyumsuzluğu** → Otomatik güncelleme çalıştır
+- **Download Hatası** → Network bağlantısını kontrol et
+- **Kurulum Hatası** → Antivirus/firewall ayarlarını kontrol et
 
 ### Debug İpuçları
-- Headless modu kapat
-- Screenshot'ları kontrol et
-- Log dosyalarını incele
-- Browser console'u kontrol et 
+- `EnablePerformanceMonitoring: true` ile performans izleme
+- `LogSlowOperations: true` ile yavaş işlemleri logla
+- `GeneratePerformanceReport: true` ile detaylı raporlar
+- Console loglarını kontrol et
+
+## 📚 Teknik Detaylar
+
+### Proje Yapısı
+```
+TestAutomationProject/
+├── Core/                    # Domain Layer
+│   ├── PerformanceMonitor.cs # Performans monitoring
+│   ├── DriverManager.cs     # Driver güncelleme
+│   ├── EnhancedBrowser.cs   # Gelişmiş browser
+│   └── Configuration.cs     # Konfigürasyon
+├── Helpers/                 # Yardımcı sınıflar
+│   └── PerformanceHelper.cs # Performans yardımcıları
+├── Features/               # BDD Feature dosyaları
+│   └── PerformanceTest.feature
+├── StepDefinitions/        # Test implementasyonları
+│   └── PerformanceSteps.cs
+└── Results/                # Test sonuçları
+    └── performance-report.json
+```
+
+### Performans Monitoring API
+```csharp
+// Timer başlat
+PerformanceMonitor.StartTimer("OperationName");
+
+// Timer durdur
+var elapsed = PerformanceMonitor.StopTimer("OperationName");
+
+// Metrikleri al
+var metrics = PerformanceMonitor.GetCurrentMetrics();
+
+// İstatistikleri al
+var statistics = PerformanceMonitor.GetPerformanceStatistics();
+
+// Rapor oluştur
+PerformanceHelper.GeneratePerformanceReport();
+```
+
+### Driver Güncelleme API
+```csharp
+// Chrome driver güncelle
+await DriverManager.UpdateChromeDriverAsync();
+
+// Edge driver güncelle
+await DriverManager.UpdateEdgeDriverAsync();
+
+// Uyumluluk kontrolü
+var isCompatible = DriverManager.CheckDriverCompatibility("chrome");
+
+// Otomatik uyumluluk kontrolü
+await EnhancedBrowser.EnsureDriverCompatibilityAsync("edge");
+```
+
+---
+
+**Versiyon:** 2.0.0  
+**Teknoloji:** .NET 9, Selenium 4, SpecFlow 3.9.74, Allure 3.5.0  
+**Durum:** ✅ Production Ready with Performance Monitoring 
