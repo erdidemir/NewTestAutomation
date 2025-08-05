@@ -19,7 +19,7 @@ namespace TestAutomationProject.Core.Hooks
         private static ExtentReports extent;
         private static ExtentTest scenarioTest;
         private static Random _random = new Random();
-        public static string randomText;
+        public string randomText;
         private readonly IObjectContainer objectContainer;
         private readonly ScenarioContext scenarioContext;
         private IWebDriver webDriver;
@@ -162,7 +162,6 @@ namespace TestAutomationProject.Core.Hooks
         public static void BeforeFeature(FeatureContext context)
         {
             Serilog.Log.Information("Selecting feature file {0} to run", context.FeatureInfo.Title);
-            randomText = DateTime.Now.ToString("yyMMddHHmmss");
         }
 
         [AfterFeature]
