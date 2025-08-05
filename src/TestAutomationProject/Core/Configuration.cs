@@ -44,14 +44,6 @@ namespace TestAutomationProject.Core
         public static string AllureResultsPath => _config["Configuration:AllureSettings:AllureResultsPath"] ?? "allure-results";
         public static string AllureReportPath => _config["Configuration:AllureSettings:AllureReportPath"] ?? "allure-report";
 
-        // Performance Settings
-        public static bool EnablePerformanceMonitoring => bool.TryParse(_config["Configuration:PerformanceSettings:EnablePerformanceMonitoring"], out var val) && val;
-        public static bool GeneratePerformanceReport => bool.TryParse(_config["Configuration:PerformanceSettings:GeneratePerformanceReport"], out var val) && val;
-        public static bool LogSlowOperations => bool.TryParse(_config["Configuration:PerformanceSettings:LogSlowOperations"], out var val) && val;
-        public static int SlowOperationThresholdMs => int.TryParse(_config["Configuration:PerformanceSettings:SlowOperationThresholdMs"], out var val) ? val : 5000;
-        public static int MemoryWarningThresholdMB => int.TryParse(_config["Configuration:PerformanceSettings:MemoryWarningThresholdMB"], out var val) ? val : 1000;
-        public static int CpuWarningThresholdMs => int.TryParse(_config["Configuration:PerformanceSettings:CpuWarningThresholdMs"], out var val) ? val : 10000;
-
         // Driver Settings
         public static bool AutoUpdateDrivers => bool.TryParse(_config["Configuration:DriverSettings:AutoUpdateDrivers"], out var val) && val;
         public static bool CheckDriverCompatibility => bool.TryParse(_config["Configuration:DriverSettings:CheckDriverCompatibility"], out var val) && val;
