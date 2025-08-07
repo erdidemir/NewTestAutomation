@@ -8,6 +8,7 @@ using TechTalk.SpecFlow;
 using NUnit.Framework;
 using TestAutomationProject.Pages;
 using TestAutomationProject.Core;
+using TestAutomationProject.Helpers;
 using AventStack.ExtentReports;
 using AventStack.ExtentReports.Reporter;
 
@@ -94,6 +95,10 @@ namespace TestAutomationProject.Core.Hooks
                 {
                     Serilog.Log.Warning("ExtentReports object is null, cannot flush report");
                 }
+                
+                // Allure raporu oluştur
+                AllureReportHelper.CreateAllureResults();
+                AllureReportHelper.GenerateAllureReport();
             }
             catch (Exception ex)
             {
@@ -155,6 +160,16 @@ namespace TestAutomationProject.Core.Hooks
             {
                 objectContainer.Resolve<IWebDriver>().Close();
                 objectContainer.Resolve<IWebDriver>().Dispose();
+            }
+            
+            // Her senaryo sonunda Allure results oluştur
+            try
+            {
+                AllureReportHelper.CreateAllureResults();
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Error("Allure results oluşturulurken hata: {0}", ex.Message);
             }
         }
 

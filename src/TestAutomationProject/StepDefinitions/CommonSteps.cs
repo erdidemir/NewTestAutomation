@@ -19,16 +19,6 @@ namespace TestAutomationProject.StepDefinitions
             _scenarioContext = scenarioContext;
         }
 
-        [BeforeScenario]
-        public void Setup()
-        {
-            // WebDriver'ı Hooks'tan al
-            if (_objectContainer.IsRegistered<IWebDriver>())
-            {
-                _driver = _objectContainer.Resolve<IWebDriver>();
-            }
-        }
-
         [Given(@"kullanıcı test için hazır")]
         public void GivenKullaniciTestIcinHazir()
         {

@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Allure.Commons" />
     <PackageReference Include="BoDi" />
     <PackageReference Include="coverlet.collector" />
     <PackageReference Include="ExtentReports" />

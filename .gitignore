@@ -368,3 +368,26 @@ FodyWeavers.xsd
 **/TestResults/
 **/Reports/
 **/Logs/
+
+# Allure Reports and Results
+**/allure-results/
+**/allure-report/
+**/allure-results/
+**/allure-report/
+allure-results/
+allure-report/
+**/bin/Debug/*/allure-results/
+**/bin/Release/*/allure-results/
+
+# Allure specific files
+*-result.json
+*-result.xml
+allure-results.json
+allure-results.xml
+
+# Test automation specific
+**/Screenshots/
+**/Videos/
+**/Downloads/
+**/Temp/
+**/tmp/

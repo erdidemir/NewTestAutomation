@@ -1,9 +1,7 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
-using System;
-using TestAutomationProject.Core;
 using SeleniumExtras.WaitHelpers;
-using System.Threading;
+using NUnit.Framework;
 
 namespace TestAutomationProject.Pages
 {
@@ -13,17 +11,38 @@ namespace TestAutomationProject.Pages
 
         public CommonPage(IWebDriver driver) : base(driver)
         {
-            _defaultWaitMilliseconds = Configuration.ElementDelayMilliseconds;
+            _defaultWaitMilliseconds = 10000; // 10 saniye
         }
 
         /// <summary>
-        /// Sayfanın tam olarak yüklendiğinden emin olmak için bekleme işlemi.
+        /// Sayfanın tamamen yüklenmesini bekler.
         /// </summary>
         public void WaitForPageLoad()
         {
-            var wait = new WebDriverWait(_driver, TimeSpan.FromMilliseconds(_defaultWaitMilliseconds));
-            wait.Until(d => ((IJavaScriptExecutor)d)
-                .ExecuteScript("return document.readyState").ToString() == "complete");
+            var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(30));
+            wait.Until(driver => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+        }
+
+        public void WaitUntilElementDisplayed(By element)
+        {
+            WebDriverWait w = new WebDriverWait(_driver, TimeSpan.FromSeconds(_defaultWaitMilliseconds));
+            w.Until(ExpectedConditions.ElementIsVisible(element));
+            int elementCount = _driver.FindElements(element).Count;
+            Assert.That(elementCount, Is.EqualTo(1));
+        }
+
+        public void WaitUntilElementNotDisplayed(By element)
+        {
+            int elementCount = _driver.FindElements(element).Count;
+            Assert.That(elementCount, Is.EqualTo(0));
+        }
+
+        public void WaitUntilElementCountDisplayed(By element, int count)
+        {
+            WebDriverWait w = new WebDriverWait(_driver, TimeSpan.FromSeconds(50));
+            w.Until(ExpectedConditions.ElementIsVisible(element));
+            int elementCount = _driver.FindElements(element).Count;
+            Assert.That(elementCount, Is.EqualTo(count));
         }
 
         /// <summary>
@@ -125,7 +144,7 @@ namespace TestAutomationProject.Pages
         /// </summary>
         public void ScrollDown()
         {
-            ((IJavaScriptExecutor)_driver).ExecuteScript("window.scrollBy(0, 500);");
+            ((IJavaScriptExecutor)_driver).ExecuteScript("window.scrollTo(0, document.body.scrollHeight);");
         }
 
         /// <summary>
@@ -133,7 +152,7 @@ namespace TestAutomationProject.Pages
         /// </summary>
         public void ScrollUp()
         {
-            ((IJavaScriptExecutor)_driver).ExecuteScript("window.scrollBy(0, -500);");
+            ((IJavaScriptExecutor)_driver).ExecuteScript("window.scrollTo(0, 0);");
         }
 
         /// <summary>
@@ -146,7 +165,7 @@ namespace TestAutomationProject.Pages
         }
 
         /// <summary>
-        /// Sayfanın başlığını alır.
+        /// Sayfa başlığını alır.
         /// </summary>
         public string GetPageTitle()
         {
@@ -154,7 +173,7 @@ namespace TestAutomationProject.Pages
         }
 
         /// <summary>
-        /// Sayfanın URL'sini alır.
+        /// Mevcut URL'yi alır.
         /// </summary>
         public string GetCurrentUrl()
         {
@@ -162,7 +181,7 @@ namespace TestAutomationProject.Pages
         }
 
         /// <summary>
-        /// Tarayıcı geçmişinde geri gider.
+        /// Bir önceki sayfaya geri döner.
         /// </summary>
         public void GoBack()
         {
@@ -170,7 +189,7 @@ namespace TestAutomationProject.Pages
         }
 
         /// <summary>
-        /// Tarayıcı geçmişinde ileri gider.
+        /// Bir sonraki sayfaya ilerler.
         /// </summary>
         public void GoForward()
         {
@@ -182,7 +201,7 @@ namespace TestAutomationProject.Pages
         /// </summary>
         public void AcceptAlert()
         {
-            var wait = new WebDriverWait(_driver, TimeSpan.FromMilliseconds(_defaultWaitMilliseconds));
+            var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
             wait.Until(ExpectedConditions.AlertIsPresent());
             _driver.SwitchTo().Alert().Accept();
         }
@@ -192,17 +211,17 @@ namespace TestAutomationProject.Pages
         /// </summary>
         public void DismissAlert()
         {
-            var wait = new WebDriverWait(_driver, TimeSpan.FromMilliseconds(_defaultWaitMilliseconds));
+            var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
             wait.Until(ExpectedConditions.AlertIsPresent());
             _driver.SwitchTo().Alert().Dismiss();
         }
 
         /// <summary>
-        /// Alert'teki metni alır.
+        /// Alert metnini alır.
         /// </summary>
         public string GetAlertText()
         {
-            var wait = new WebDriverWait(_driver, TimeSpan.FromMilliseconds(_defaultWaitMilliseconds));
+            var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
             wait.Until(ExpectedConditions.AlertIsPresent());
             return _driver.SwitchTo().Alert().Text;
         }
@@ -212,9 +231,56 @@ namespace TestAutomationProject.Pages
         /// </summary>
         public void SendKeysToAlert(string text)
         {
-            var wait = new WebDriverWait(_driver, TimeSpan.FromMilliseconds(_defaultWaitMilliseconds));
+            var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
             wait.Until(ExpectedConditions.AlertIsPresent());
             _driver.SwitchTo().Alert().SendKeys(text);
         }
+
+        /// <summary>
+        /// Elementin görünür olup olmadığını kontrol eder.
+        /// </summary>
+        public bool IsElementDisplayed(By by)
+        {
+            try
+            {
+                return _driver.FindElement(by).Displayed;
+            }
+            catch (NoSuchElementException)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Elementin var olup olmadığını kontrol eder.
+        /// </summary>
+        public bool IsElementPresent(By by)
+        {
+            try
+            {
+                _driver.FindElement(by);
+                return true;
+            }
+            catch (NoSuchElementException)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Elementin tıklanabilir olup olmadığını kontrol eder.
+        /// </summary>
+        public bool IsElementClickable(By by)
+        {
+            try
+            {
+                var element = _driver.FindElement(by);
+                return element.Displayed && element.Enabled;
+            }
+            catch (NoSuchElementException)
+            {
+                return false;
+            }
+        }
     }
-}
+} 
