@@ -32,5 +32,11 @@
     <PackageVersion Include="SpecFlow.Plus.LivingDocPlugin" Version="3.9.57" />
     <PackageVersion Include="StackExchange.Redis" Version="2.7.33" />
     <PackageVersion Include="stateless" Version="5.16.0" />
+    <!-- API Test Packages -->
+    <PackageVersion Include="RestSharp" Version="108.0.3" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageVersion Include="FluentAssertions" Version="6.12.0" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="9.0.7" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
   </ItemGroup>
 </Project> 
