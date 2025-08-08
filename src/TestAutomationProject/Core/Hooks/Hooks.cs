@@ -1,16 +1,14 @@
-﻿using BoDi;
-using OpenQA.Selenium;
+﻿using System;
 using System.Drawing;
-using Serilog;
-using Serilog.Core;
-using Serilog.Events;
-using TechTalk.SpecFlow;
-using NUnit.Framework;
-using TestAutomationProject.Pages;
-using TestAutomationProject.Core;
-using TestAutomationProject.Helpers;
+using System.IO;
 using AventStack.ExtentReports;
 using AventStack.ExtentReports.Reporter;
+using BoDi;
+using OpenQA.Selenium;
+using Serilog;
+using Serilog.Core;
+using TechTalk.SpecFlow;
+using System.Collections.Generic;
 
 namespace TestAutomationProject.Core.Hooks
 {
@@ -19,17 +17,17 @@ namespace TestAutomationProject.Core.Hooks
     {
         private static ExtentReports extent;
         private static ExtentTest scenarioTest;
-        private static Random _random = new Random();
-        public string randomText;
+
         private readonly IObjectContainer objectContainer;
         private readonly ScenarioContext scenarioContext;
         private IWebDriver webDriver;
-        private CommonPage _commonPage;
-        private static string reportPath = System.IO.Directory.GetParent(@"../../../").FullName
-                                           + Path.DirectorySeparatorChar + (Configuration.ResultsFolder ?? "Results")
-                                           + Path.DirectorySeparatorChar + (Configuration.ReportPathBase ?? "Result") + "_" +
-                                           DateTime.Now.ToString("ddMMyyyy HHmmss");
-        private static string extentReportPath = Path.Combine(Directory.GetCurrentDirectory(), "Results", "index.html");
+
+        private static readonly Random _random = new Random();
+        private static string reportPath = Path.Combine(Directory.GetCurrentDirectory(), "Results", DateTime.Now.ToString("ddMMyyyy_HHmmss"));
+        private static string extentReportPath = Path.Combine(reportPath, "ExtentReport.html");
+        
+        // Allure step'leri için liste
+        private static List<object> currentScenarioSteps = new List<object>();
 
         public Hooks(IObjectContainer objectContainer, ScenarioContext scenarioContext)
         {
@@ -40,102 +38,32 @@ namespace TestAutomationProject.Core.Hooks
         [BeforeTestRun]
         public static void BeforeTestRun()
         {
-            // Ensure Results directory exists
-            var resultsDir = Path.Combine(Directory.GetCurrentDirectory(), "Results");
-            if (!Directory.Exists(resultsDir))
-            {
-                Directory.CreateDirectory(resultsDir);
-            }
+            Directory.CreateDirectory(reportPath);
+            Directory.CreateDirectory(Path.Combine(reportPath, "Screenshots"));
+            Directory.CreateDirectory(Path.Combine(reportPath, "Logs"));
 
-            // ExtentReports setup
             var htmlReporter = new ExtentHtmlReporter(extentReportPath);
             htmlReporter.Config.Theme = AventStack.ExtentReports.Reporter.Configuration.Theme.Dark;
             extent = new ExtentReports();
             extent.AttachReporter(htmlReporter);
 
-            Serilog.Log.Information("ExtentReport will be saved to: {0}", extentReportPath);
-
             LoggingLevelSwitch levelSwitch = new LoggingLevelSwitch(Serilog.Events.LogEventLevel.Debug);
-            Serilog.Log.Logger = new LoggerConfiguration()
+            Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.ControlledBy(levelSwitch)
-                .WriteTo.File(reportPath + @"/Logs",
-                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} | {Level:u3} | {Message} {NewLine}",
-                    rollingInterval: RollingInterval.Day).CreateLogger();
-        }
+                .WriteTo.File(Path.Combine(reportPath, "Logs", "log.txt"),
+                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} | {Level:u3} | {Message}{NewLine}",
+                    rollingInterval: RollingInterval.Day)
+                .CreateLogger();
 
-        [AfterTestRun]
-        public static void AfterTestRun()
-        {
-            try
-            {
-                if (extent != null)
-                {
-                    extent.Flush();
-                    Serilog.Log.Information("ExtentReport flushed to: {0}", extentReportPath);
-                    
-                    // Check if file was actually created
-                    if (File.Exists(extentReportPath))
-                    {
-                        Serilog.Log.Information("ExtentReport file created successfully at: {0}", extentReportPath);
-                        
-                        // Copy to Results folder for easier access
-                        var resultsPath = Path.Combine(Directory.GetCurrentDirectory(), "Results", "index.html");
-                        if (File.Exists(extentReportPath))
-                        {
-                            File.Copy(extentReportPath, resultsPath, true);
-                            Serilog.Log.Information("ExtentReport copied to: {0}", resultsPath);
-                        }
-                    }
-                    else
-                    {
-                        Serilog.Log.Warning("ExtentReport file was not created at: {0}", extentReportPath);
-                    }
-                }
-                else
-                {
-                    Serilog.Log.Warning("ExtentReports object is null, cannot flush report");
-                }
-                
-                // Allure raporu oluştur
-                AllureReportHelper.CreateAllureResults();
-                AllureReportHelper.GenerateAllureReport();
-            }
-            catch (Exception ex)
-            {
-                Serilog.Log.Error("Error flushing ExtentReport: {0}", ex.Message);
-            }
-        }
-
-        [AfterStep]
-        public void AfterStep(ScenarioContext context)
-        {
-            if (context.TestError != null)
-            {
-                Serilog.Log.Error("Test Step Failed | {0}", context.TestError.Message);
-                if (Configuration.TakeScreenshotOnFailure)
-                {
-                    var screenshotPath = TakeScreenshot("Failure_Screenshot", context.TestError.Message);
-                    scenarioTest.Fail(context.TestError.Message, MediaEntityBuilder.CreateScreenCaptureFromPath(screenshotPath).Build());
-                }
-            }
-            else
-            {
-                var stepType = scenarioContext.StepContext.StepInfo.StepDefinitionType.ToString();
-                if (stepType == "Then" && Configuration.TakeScreenshotOnSuccess)
-                {
-                    var screenshotPath = TakeScreenshot("Success_Screenshot", "Step completed successfully");
-                    scenarioTest.Pass(scenarioContext.StepContext.StepInfo.Text, MediaEntityBuilder.CreateScreenCaptureFromPath(screenshotPath).Build());
-                }
-                else
-                {
-                    scenarioTest.Pass(scenarioContext.StepContext.StepInfo.Text);
-                }
-            }
+            Log.Information("Test başladı. Rapor yolu: {0}", extentReportPath);
         }
 
         [BeforeScenario]
-        public void InitializeWebDriver(ScenarioContext context)
+        public void InitializeScenario()
         {
+            // Step listesini temizle
+            currentScenarioSteps.Clear();
+            
             if (!scenarioContext.ScenarioInfo.Tags.Contains("API"))
             {
                 webDriver = Browser.InitBrowser(Configuration.BrowserName);
@@ -147,45 +75,156 @@ namespace TestAutomationProject.Core.Hooks
                 objectContainer.RegisterInstanceAs(webDriver);
             }
 
-            Serilog.Log.Information("Selecting scenario {0} to run", context.ScenarioInfo.Title);
+            scenarioTest = extent.CreateTest(scenarioContext.ScenarioInfo.Title);
+            Log.Information("Senaryo başlıyor: {0}", scenarioContext.ScenarioInfo.Title);
+        }
 
-            // ExtentReports scenario
-            scenarioTest = extent.CreateTest(context.ScenarioInfo.Title);
+        [AfterStep]
+        public void AfterEachStep()
+        {
+            var stepInfo = scenarioContext.StepContext.StepInfo.Text;
+            var stepType = scenarioContext.StepContext.StepInfo.StepDefinitionType.ToString();
+
+            // Then adımında ekran görüntüsü al
+            string screenshotPath = null;
+            if (stepType == "Then")
+            {
+                screenshotPath = TakeScreenshot("Then_" + stepInfo.Replace(" ", "_"), stepInfo);
+            }
+
+            // Allure step'ini listeye ekle
+            var allureStep = new
+            {
+                name = stepInfo,
+                status = scenarioContext.TestError != null ? "failed" : "passed",
+                stage = "finished",
+                start = DateTimeOffset.UtcNow.AddSeconds(-2).ToUnixTimeMilliseconds(),
+                stop = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                statusDetails = scenarioContext.TestError != null ? new
+                {
+                    message = scenarioContext.TestError.Message,
+                    trace = scenarioContext.TestError.StackTrace
+                } : null,
+                attachments = !string.IsNullOrEmpty(screenshotPath) ? new object[]
+                {
+                    new
+                    {
+                        name = "Screenshot",
+                        type = "image/png",
+                        source = screenshotPath
+                    }
+                } : new object[] { }
+            };
+            currentScenarioSteps.Add(allureStep);
+
+            if (scenarioContext.TestError != null)
+            {
+                Log.Error("Adım başarısız: {0} | Hata: {1}", stepInfo, scenarioContext.TestError.Message);
+                var failureScreenshotPath = TakeScreenshot("Failure_" + stepType, scenarioContext.TestError.Message);
+                scenarioTest.Fail(scenarioContext.TestError.Message, MediaEntityBuilder.CreateScreenCaptureFromPath(failureScreenshotPath).Build());
+            }
+            else
+            {
+                if (stepType == "Then" && Configuration.TakeScreenshotOnSuccess)
+                {
+                    var successScreenshotPath = TakeScreenshot("Success_" + stepType, "Success");
+                    scenarioTest.Pass(stepInfo, MediaEntityBuilder.CreateScreenCaptureFromPath(successScreenshotPath).Build());
+                }
+                else
+                {
+                    scenarioTest.Pass(stepInfo);
+                }
+            }
         }
 
         [AfterScenario]
-        public void CloseBrowser()
+        public void AfterScenario()
         {
+            // Allure results JSON dosyası oluştur
+            CreateAllureResults();
+            
             if (objectContainer.IsRegistered<IWebDriver>())
             {
-                objectContainer.Resolve<IWebDriver>().Close();
-                objectContainer.Resolve<IWebDriver>().Dispose();
+                var driver = objectContainer.Resolve<IWebDriver>();
+                driver.Close();
+                driver.Dispose();
             }
-            
-            // Her senaryo sonunda Allure results oluştur
+        }
+
+        [AfterTestRun]
+        public static void AfterTestRun()
+        {
+            extent.Flush();
+            Log.Information("Rapor tamamlandı: {0}", extentReportPath);
+        }
+
+        private void CreateAllureResults()
+        {
             try
             {
-                AllureReportHelper.CreateAllureResults();
+                if (scenarioContext == null)
+                {
+                    Log.Warning("ScenarioContext null, Allure results oluşturulamıyor");
+                    return;
+                }
+
+                var allureResultsPath = Path.Combine(Directory.GetCurrentDirectory(), "allure-results");
+                if (!Directory.Exists(allureResultsPath))
+                {
+                    Directory.CreateDirectory(allureResultsPath);
+                }
+
+                var testResult = new
+                {
+                    uuid = Guid.NewGuid().ToString(),
+                    name = scenarioContext.ScenarioInfo.Title,
+                    fullName = $"TestAutomationProject.Features.GoogleAramaTestleriFeature.{scenarioContext.ScenarioInfo.Title}",
+                    status = scenarioContext.TestError != null ? "failed" : "passed",
+                    statusDetails = new
+                    {
+                        message = scenarioContext.TestError?.Message ?? "",
+                        trace = scenarioContext.TestError?.StackTrace ?? ""
+                    },
+                    stage = "finished",
+                    start = DateTimeOffset.UtcNow.AddSeconds(-10).ToUnixTimeMilliseconds(),
+                    stop = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    description = "Google arama testi",
+                    severity = "normal",
+                    links = new object[] { },
+                    labels = new object[]
+                    {
+                        new { name = "suite", value = "GoogleAramaTestleriFeature" },
+                        new { name = "testClass", value = "GoogleAramaTestleriFeature" },
+                        new { name = "testMethod", value = scenarioContext.ScenarioInfo.Title },
+                        new { name = "package", value = "TestAutomationProject.Features" },
+                        new { name = "framework", value = "NUnit" },
+                        new { name = "language", value = "C#" },
+                        new { name = "severity", value = "normal" }
+                    },
+                    parameters = new object[] { },
+                    steps = currentScenarioSteps.ToArray(),
+                    attachments = new object[] { }
+                };
+
+                var json = System.Text.Json.JsonSerializer.Serialize(testResult, new System.Text.Json.JsonSerializerOptions 
+                { 
+                    WriteIndented = true,
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                });
+
+                var fileName = $"test-result.json";
+                var filePath = Path.Combine(allureResultsPath, fileName);
+                
+                File.WriteAllText(filePath, json);
+                Log.Information($"Allure test sonucu oluşturuldu: {filePath}");
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error("Allure results oluşturulurken hata: {0}", ex.Message);
+                Log.Error("Allure results oluşturulurken hata: {0}", ex.Message);
             }
         }
 
-        [BeforeFeature]
-        public static void BeforeFeature(FeatureContext context)
-        {
-            Serilog.Log.Information("Selecting feature file {0} to run", context.FeatureInfo.Title);
-        }
-
-        [AfterFeature]
-        public static void CloseLogger()
-        {
-            // Logger.Instance.Close();
-        }
-
-        private string TakeScreenshot(string screenshotName, string description)
+        private string TakeScreenshot(string name, string description)
         {
             try
             {
@@ -193,19 +232,25 @@ namespace TestAutomationProject.Core.Hooks
                 {
                     var screenshot = ((ITakesScreenshot)webDriver).GetScreenshot();
                     var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-                    var fileName = $"{screenshotName}_{timestamp}.{Configuration.ScreenshotFormat}";
-                    var screenshotPath = Path.Combine(reportPath, "Screenshots", fileName);
-                    Directory.CreateDirectory(Path.GetDirectoryName(screenshotPath));
-                    screenshot.SaveAsFile(screenshotPath, ScreenshotImageFormat.Png);
-                    Serilog.Log.Information("Screenshot saved: {0}", screenshotPath);
-                    return screenshotPath;
+                    var fileName = $"{name}_{timestamp}.{Configuration.ScreenshotFormat}";
+                    var path = Path.Combine(reportPath, "Screenshots", fileName);
+                    Directory.CreateDirectory(Path.GetDirectoryName(path));
+                    screenshot.SaveAsFile(path, ScreenshotImageFormat.Png);
+                    Log.Information("Ekran görüntüsü alındı: {0}", path);
+                    return path;
                 }
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error("Error taking screenshot: {0}", ex.Message);
+                Log.Error("Ekran görüntüsü alınamadı: {0}", ex.Message);
             }
             return null;
+        }
+
+        [BeforeFeature]
+        public static void BeforeFeature(FeatureContext context)
+        {
+            Log.Information("Feature başlıyor: {0}", context.FeatureInfo.Title);
         }
     }
 }

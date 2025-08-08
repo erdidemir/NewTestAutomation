@@ -10,7 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="C:\Users\tr1d3213\.nuget\packages\allure.commons\3.0.0.10\contentFiles\any\netstandard2.0\allureConfig.Template.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Allure.Commons" />
+    <PackageReference Include="Allure.NUnit" />
     <PackageReference Include="BoDi" />
     <PackageReference Include="coverlet.collector" />
     <PackageReference Include="ExtentReports" />
@@ -47,7 +52,6 @@
   <ItemGroup>
     <Folder Include="Drivers\" />
     <Folder Include="Helpers\" />
-    <Folder Include="Hooks\" />
     <Folder Include="Datas\" />
     <Folder Include="Features\" />
     <Folder Include="Results\" />

@@ -178,13 +178,11 @@ TestAutomationProject/
 # Windows (Chocolatey)
 choco install allure
 
-# macOS (Homebrew)
-brew install allure
+allure-results/test-result.json
 
-# Linux
-sudo apt-add-repository ppa:qameta/allure
-sudo apt-get update
-sudo apt-get install allure
+allure generate allure-results --clean -o allure-report
+
+allure open allure-report
 ```
 
 ---
