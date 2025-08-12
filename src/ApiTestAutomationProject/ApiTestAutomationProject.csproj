@@ -20,15 +20,34 @@
     <PackageReference Include="FluentAssertions" />
     <PackageReference Include="Microsoft.Extensions.Http" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
     <PackageReference Include="Allure.NUnit" />
     <PackageReference Include="Allure.Commons" />
     <PackageReference Include="Serilog" />
     <PackageReference Include="Serilog.Sinks.File" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Serilog.Extensions.Hosting" />
+    <PackageReference Include="Polly" />
+    <PackageReference Include="Polly.Extensions.Http" />
+    <!-- SpecFlow Packages -->
+    <PackageReference Include="SpecFlow" />
+    <PackageReference Include="SpecFlow.NUnit" />
+    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" />
+    <PackageReference Include="SpecFlow.Plus.LivingDocPlugin" />
+    <PackageReference Include="BoDi" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="NUnit.Framework" />
     <Using Include="FluentAssertions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

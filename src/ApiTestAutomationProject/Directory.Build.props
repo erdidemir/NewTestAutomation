@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <SpecFlow_EnableDefaultConfiguration>false</SpecFlow_EnableDefaultConfiguration>
+    <SpecFlow_EnableAnalytics>false</SpecFlow_EnableAnalytics>
+    <SpecFlow_EnableLivingDocGenerator>true</SpecFlow_EnableLivingDocGenerator>
+  </PropertyGroup>
+</Project> 

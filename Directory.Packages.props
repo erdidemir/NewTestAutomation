@@ -10,6 +10,7 @@
     <PackageVersion Include="ExtentReports" Version="4.1.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration" Version="9.0.7" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="9.0.7" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.7" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageVersion Include="NUnit" Version="4.2.2" />
     <PackageVersion Include="NUnit.Analyzers" Version="4.4.0" />
@@ -27,6 +28,9 @@
     <PackageVersion Include="Serilog.Extensions.Logging" Version="8.0.0" />
     <PackageVersion Include="Serilog.Formatting.Compact" Version="2.0.0" />
     <PackageVersion Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="5.0.1" />
+    <PackageVersion Include="Serilog.Extensions.Hosting" Version="8.0.0" />
+    <PackageVersion Include="SpecFlow" Version="3.9.74" />
     <PackageVersion Include="SpecFlow.NUnit" Version="3.9.74" />
     <PackageVersion Include="SpecFlow.Tools.MsBuild.Generation" Version="3.9.74" />
     <PackageVersion Include="SpecFlow.Plus.LivingDocPlugin" Version="3.9.57" />
@@ -38,5 +42,7 @@
     <PackageVersion Include="FluentAssertions" Version="6.12.0" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="9.0.7" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
+    <PackageVersion Include="Polly" Version="8.2.1" />
+    <PackageVersion Include="Polly.Extensions.Http" Version="3.0.0" />
   </ItemGroup>
 </Project> 
