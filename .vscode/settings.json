@@ -1,0 +1,47 @@
+{
+  "omnisharp.enableEditorConfigSupport": true,
+  "omnisharp.enableImportCompletion": true,
+  "omnisharp.enableRoslynAnalyzers": true,
+  "csharp.semanticHighlighting.enabled": true,
+  "files.associations": {
+    "*.feature": "gherkin"
+  },
+  "gherkin-autocomplete.featuresPath": "src/**/*.feature",
+  "gherkin-autocomplete.stepsPath": "src/**/StepDefinitions/**/*.cs,src/**/Steps/**/*.cs",
+  "csharp.preferences.includePackageReferences": true,
+  "csharp.preferences.includeProjectReferences": true,
+  "omnisharp.enableMsBuildLoadProjectsOnDemand": true,
+  "omnisharp.enableRoslynAnalyzers": true,
+  "omnisharp.enableImportCompletion": true,
+  "omnisharp.enableAsyncCompletion": true,
+  "omnisharp.enableEditorConfigSupport": true,
+  "omnisharp.enableHighlighting": true,
+  "omnisharp.enableHighlightReferences": true,
+  "omnisharp.enableInlayHintsForParameters": true,
+  "omnisharp.enableInlayHintsForLiteralParameters": true,
+  "omnisharp.enableInlayHintsForIndexerParameters": true,
+  "omnisharp.enableInlayHintsForObjectCreationParameters": true,
+  "omnisharp.enableInlayHintsForOtherParameters": true,
+  "omnisharp.enableInlayHintsForTypes": true,
+  "omnisharp.enableInlayHintsForImplicitVariableTypes": true,
+  "omnisharp.enableInlayHintsForLambdaParameterTypes": true,
+  "omnisharp.enableInlayHintsForImplicitObjectCreation": true,
+  "cucumberautocomplete.steps": [
+    "src/**/StepDefinitions/**/*.cs",
+    "src/**/Steps/**/*.cs"
+  ],
+  "cucumberautocomplete.syncfeatures": "src/**/*.feature",
+  "cucumberautocomplete.strictGherkinCompletion": true,
+  "cucumberautocomplete.smartSnippets": true,
+  "cucumberautocomplete.stepsInvariants": true,
+  "cucumberautocomplete.customParameters": [
+    {
+      "parameter": "{string}",
+      "value": "([^\"]*)"
+    },
+    {
+      "parameter": "{int}",
+      "value": "(-?\\d*)"
+    }
+  ]
+} 

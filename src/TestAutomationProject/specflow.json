@@ -1,15 +1,24 @@
 {
-  "$schema": "https://specflow.org/specflow-config-schema.json",
+  "$schema": "https://specflow.org/specflow-config.json",
   "bindingCulture": {
-    "language": "en-us"
+    "name": "en-US"
   },
   "language": {
-    "feature": "en"
+    "feature": "en-US"
   },
-  "plugins": [
-    {
-      "name": "SpecFlow.NUnit",
-      "type": "Runtime"
-    }
-  ]
-}
+  "generator": {
+    "allowRowTests": true,
+    "allowDebugGeneratedFiles": true,
+    "generateAsyncTests": false,
+    "allowParallelExecution": true
+  },
+  "runtime": {
+    "missingOrPendingStepsOutcome": "Error",
+    "stopAtFirstError": false
+  },
+  "trace": {
+    "traceTimings": false,
+    "minTracedDuration": "0:0:0.1",
+    "listener": "TechTalk.SpecFlow.Tracing.DefaultListener, TechTalk.SpecFlow"
+  }
+} 

@@ -20,9 +20,9 @@ namespace TestAutomationProject.Features
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.9.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
-    [NUnit.Framework.DescriptionAttribute("Google Arama Testleri")]
+    [NUnit.Framework.DescriptionAttribute("Google Search Tests")]
     [NUnit.Framework.CategoryAttribute("GoogleSearch")]
-    public partial class GoogleAramaTestleriFeature
+    public partial class GoogleSearchTestsFeature
     {
         
         private TechTalk.SpecFlow.ITestRunner testRunner;
@@ -30,15 +30,12 @@ namespace TestAutomationProject.Features
         private static string[] featureTags = new string[] {
                 "GoogleSearch"};
         
-#line 1 "GoogleSearch.feature"
-#line hidden
-        
         [NUnit.Framework.OneTimeSetUpAttribute()]
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en"), "Features", "Google Arama Testleri", "  Kullanıcı olarak Google\'da arama yapabilmek istiyorum\r\n  Böylece istediğim bilg" +
-                    "ileri bulabilirim", ProgrammingLanguage.CSharp, featureTags);
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "Google Search Tests", "  As a user I want to search on Google\r\n  So that I can find the information I ne" +
+                    "ed", ProgrammingLanguage.CSharp, featureTags);
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -78,30 +75,22 @@ namespace TestAutomationProject.Features
         
         public virtual void FeatureBackground()
         {
-#line 6
-  #line hidden
-#line 7
-    testRunner.Given("kullanıcı test için hazır", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line hidden
-#line 8
-    testRunner.And("kullanıcı Google ana sayfasında", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
+            testRunner.Given("the user is ready for testing", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+            testRunner.And("the user is on Google homepage", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Başarılı Google Arama")]
+        [NUnit.Framework.DescriptionAttribute("Successful Google Search")]
         [NUnit.Framework.CategoryAttribute("Positive")]
         [NUnit.Framework.CategoryAttribute("Smoke")]
-        public void BasarılıGoogleArama()
+        public void SuccessfulGoogleSearch()
         {
             string[] tagsOfScenario = new string[] {
                     "Positive",
                     "Smoke"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Başarılı Google Arama", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 11
-  this.ScenarioInitialize(scenarioInfo);
-#line hidden
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Successful Google Search", null, tagsOfScenario, argumentsOfScenario, featureTags);
+            this.ScenarioInitialize(scenarioInfo);
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
             {
                 testRunner.SkipScenario();
@@ -109,21 +98,11 @@ namespace TestAutomationProject.Features
             else
             {
                 this.ScenarioStart();
-#line 6
-  this.FeatureBackground();
-#line hidden
-#line 12
-    testRunner.When("kullanıcı arama kutusuna \"Selenium WebDriver\" yazar", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line hidden
-#line 13
-    testRunner.And("kullanıcı arama butonuna tıklar", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
-#line 14
-    testRunner.Then("arama sonuçları görünür olmalı", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-#line 15
-    testRunner.And("sayfa başlığı \"Selenium WebDriver\" içermeli", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
+                this.FeatureBackground();
+                testRunner.When("the user types \"Selenium WebDriver\" in the search box", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+                testRunner.And("the user clicks the search button", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+                testRunner.Then("search results should be visible", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                testRunner.And("page title should contain \"Selenium WebDriver\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
             }
             this.ScenarioCleanup();
         }

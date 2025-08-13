@@ -7,7 +7,7 @@ Feature: Post Create Operations
     @Submenu:CreateAndGet
     @Subject:Privileges
     @Target:API
-    Scenario: Create post and get the created post
+    Scenario Outline: Create post and get the created post
         Given the user is logged in with valid credentials
         When a post with <postType> is created
         And the created post is retrieved

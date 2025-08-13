@@ -19,8 +19,8 @@ namespace TestAutomationProject.StepDefinitions
             _scenarioContext = scenarioContext;
         }
 
-        [Given(@"kullanıcı test için hazır")]
-        public void GivenKullaniciTestIcinHazir()
+        [Given(@"the user is ready for testing")]
+        public void GivenTheUserIsReadyForTesting()
         {
             // WebDriver'ı tekrar kontrol et
             if (_driver == null && _objectContainer.IsRegistered<IWebDriver>())
@@ -35,8 +35,8 @@ namespace TestAutomationProject.StepDefinitions
             Thread.Sleep(5000);
         }
 
-        [When(@"testi başlat")]
-        public void WhenTestiBaslat()
+        [When(@"start the test")]
+        public void WhenStartTheTest()
         {
             // Test başlatma işlemleri
             Assert.That(_driver.Url.Contains("google.com"), Is.True, "Google sayfası açılamadı");

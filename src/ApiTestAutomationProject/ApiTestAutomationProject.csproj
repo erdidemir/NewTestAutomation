@@ -6,6 +6,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <SpecFlow_EnableDefaultConfiguration>false</SpecFlow_EnableDefaultConfiguration>
+    <SpecFlow_EnableAnalytics>false</SpecFlow_EnableAnalytics>
+    <SpecFlow_EnableLivingDocGenerator>true</SpecFlow_EnableLivingDocGenerator>
+    <SpecFlow_GenerateRuntimeConfiguration>false</SpecFlow_GenerateRuntimeConfiguration>
   </PropertyGroup>
 
   <ItemGroup>

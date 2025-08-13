@@ -32,8 +32,8 @@ namespace TestAutomationProject.StepDefinitions
             }
         }
 
-        [Given(@"kullanıcı Google ana sayfasında")]
-        public void GivenKullaniciGoogleAnaSayfasinda()
+        [Given(@"the user is on Google homepage")]
+        public void GivenTheUserIsOnGoogleHomepage()
         {
             // _googleSearchPage null kontrolü
             if (_googleSearchPage == null)
@@ -55,8 +55,8 @@ namespace TestAutomationProject.StepDefinitions
             Thread.Sleep(5000);
         }
 
-        [When(@"kullanıcı arama kutusuna ""(.*)"" yazar")]
-        public void WhenKullaniciAramaKutusunaYazar(string searchText)
+        [When(@"the user types ""(.*)"" in the search box")]
+        public void WhenTheUserTypesInTheSearchBox(string searchText)
         {
             // _googleSearchPage null kontrolü
             if (_googleSearchPage == null)
@@ -74,8 +74,8 @@ namespace TestAutomationProject.StepDefinitions
             Thread.Sleep(5000);
         }
 
-        [When(@"kullanıcı arama butonuna tıklar")]
-        public void WhenKullaniciAramaButonunaTiklar()
+        [When(@"the user clicks the search button")]
+        public void WhenTheUserClicksTheSearchButton()
         {
             // _googleSearchPage null kontrolü
             if (_googleSearchPage == null)
@@ -93,8 +93,8 @@ namespace TestAutomationProject.StepDefinitions
             Thread.Sleep(5000);
         }
 
-        [When(@"kullanıcı Google'da ""(.*)"" arar")]
-        public void WhenKullaniciGoogleDaArar(string searchText)
+        [When(@"the user searches ""(.*)"" on Google")]
+        public void WhenTheUserSearchesOnGoogle(string searchText)
         {
             // _googleSearchPage null kontrolü
             if (_googleSearchPage == null)
@@ -112,8 +112,8 @@ namespace TestAutomationProject.StepDefinitions
             Thread.Sleep(5000);
         }
 
-        [When(@"kullanıcı şanslı ol butonuna tıklar")]
-        public void WhenKullaniciSansliOlButonunaTiklar()
+        [When(@"the user clicks the lucky button")]
+        public void WhenTheUserClicksTheLuckyButton()
         {
             // _googleSearchPage null kontrolü
             if (_googleSearchPage == null)
@@ -131,8 +131,8 @@ namespace TestAutomationProject.StepDefinitions
             Thread.Sleep(5000);
         }
 
-        [Then(@"Google logosu görünür olmalı")]
-        public void ThenGoogleLogosuGorunurOlmali()
+        [Then(@"Google logo should be visible")]
+        public void ThenGoogleLogoShouldBeVisible()
         {
             // _googleSearchPage null kontrolü
             if (_googleSearchPage == null)
@@ -150,8 +150,8 @@ namespace TestAutomationProject.StepDefinitions
             Thread.Sleep(5000);
         }
 
-        [Then(@"arama kutusu görünür olmalı")]
-        public void ThenAramaKutusuGorunurOlmali()
+        [Then(@"search box should be visible")]
+        public void ThenSearchBoxShouldBeVisible()
         {
             // _googleSearchPage null kontrolü
             if (_googleSearchPage == null)
@@ -169,8 +169,8 @@ namespace TestAutomationProject.StepDefinitions
             Thread.Sleep(5000);
         }
 
-        [Then(@"arama sonuçları görünür olmalı")]
-        public void ThenAramaSonuclariGorunurOlmali()
+        [Then(@"search results should be visible")]
+        public void ThenSearchResultsShouldBeVisible()
         {
             // _googleSearchPage null kontrolü
             if (_googleSearchPage == null)
@@ -188,8 +188,8 @@ namespace TestAutomationProject.StepDefinitions
             Thread.Sleep(5000);
         }
 
-        [Then(@"arama kutusunda ""(.*)"" yazmalı")]
-        public void ThenAramaKutusundaYazmali(string expectedText)
+        [Then(@"search box should contain ""(.*)""")]
+        public void ThenSearchBoxShouldContain(string expectedText)
         {
             // _googleSearchPage null kontrolü
             if (_googleSearchPage == null)
@@ -208,8 +208,8 @@ namespace TestAutomationProject.StepDefinitions
             Thread.Sleep(5000);
         }
 
-        [Then(@"sayfa başlığı ""(.*)"" içermeli")]
-        public void ThenSayfaBasligiIcermeli(string expectedTitle)
+        [Then(@"page title should contain ""(.*)""")]
+        public void ThenPageTitleShouldContain(string expectedTitle)
         {
             // _googleSearchPage null kontrolü
             if (_googleSearchPage == null)
@@ -228,8 +228,8 @@ namespace TestAutomationProject.StepDefinitions
             Thread.Sleep(5000);
         }
 
-        [Then(@"Google ana sayfası yüklenmiş olmalı")]
-        public void ThenGoogleAnaSayfasiYuklenmisOlmali()
+        [Then(@"Google homepage should be loaded")]
+        public void ThenGoogleHomepageShouldBeLoaded()
         {
             // _googleSearchPage null kontrolü
             if (_googleSearchPage == null)
