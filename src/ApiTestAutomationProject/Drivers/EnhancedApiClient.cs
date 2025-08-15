@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Retry;
 using System.Text;
+using Allure.Commons;
 
 namespace ApiTestAutomationProject.Drivers
 {
@@ -30,6 +31,9 @@ namespace ApiTestAutomationProject.Drivers
         public string? ErrorMessage { get; set; }
         public Dictionary<string, string> Headers { get; set; } = new();
         public bool IsSuccess => (int)StatusCode >= 200 && (int)StatusCode < 300;
+        public TimeSpan Duration { get; set; }
+        public string? RequestBody { get; set; }
+        public string? ResponseBody { get; set; }
     }
 
     public class EnhancedApiClient : IApiClient
@@ -51,7 +55,8 @@ namespace ApiTestAutomationProject.Drivers
             var options = new RestClientOptions(baseUrl)
             {
                 ThrowOnDeserializationError = false,
-                ThrowOnAnyError = false
+                ThrowOnAnyError = false,
+                Timeout = timeout
             };
             
             _client = new RestClient(options);
@@ -76,6 +81,8 @@ namespace ApiTestAutomationProject.Drivers
 
         public async Task<ApiResponse<T>> ExecuteAsync<T>(string endpoint, HttpMethod method, object? body = null, Dictionary<string, string>? headers = null)
         {
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            
             try
             {
                 var request = CreateRequest(endpoint, method, body, headers);
@@ -84,59 +91,82 @@ namespace ApiTestAutomationProject.Drivers
                 
                 var response = await _client.ExecuteAsync<T>(request);
                 
-                var apiResponse = CreateApiResponse<T>(response);
+                stopwatch.Stop();
+                var apiResponse = CreateApiResponse<T>(response, stopwatch.Elapsed, body);
                 LogResponse(apiResponse);
+                
+                // Allure report için API çağrısı bilgisi ekle
+                AddAllureAttachment(apiResponse, endpoint, method);
                 
                 return apiResponse;
             }
             catch (Exception ex)
             {
+                stopwatch.Stop();
                 _logger.Error(ex, "API request failed");
-                return new ApiResponse<T>
+                
+                var errorResponse = new ApiResponse<T>
                 {
                     StatusCode = HttpStatusCode.InternalServerError,
-                    ErrorMessage = ex.Message
+                    ErrorMessage = ex.Message,
+                    Duration = stopwatch.Elapsed
                 };
+                
+                // Allure report için hata bilgisi ekle
+                AllureLifecycle.Instance.AddAttachment("api-error.txt", "text/plain", 
+                    $"Endpoint: {endpoint}\nMethod: {method}\nError: {ex.Message}\nStackTrace: {ex.StackTrace}");
+                
+                return errorResponse;
             }
         }
 
-        public async Task<ApiResponse<T>> GetAsync<T>(string endpoint, Dictionary<string, string>? headers = null)
+        private void AddAllureAttachment<T>(ApiResponse<T> response, string endpoint, HttpMethod method)
         {
-            return await ExecuteAsync<T>(endpoint, HttpMethod.Get, null, headers);
-        }
+            try
+            {
+                var apiInfo = new
+                {
+                    Endpoint = endpoint,
+                    Method = method.ToString(),
+                    StatusCode = response.StatusCode,
+                    Duration = response.Duration.TotalMilliseconds,
+                    IsSuccess = response.IsSuccess,
+                    RequestBody = response.RequestBody,
+                    ResponseBody = response.ResponseBody,
+                    ErrorMessage = response.ErrorMessage
+                };
 
-        public async Task<ApiResponse<T>> PostAsync<T>(string endpoint, object body, Dictionary<string, string>? headers = null)
-        {
-            return await ExecuteAsync<T>(endpoint, HttpMethod.Post, body, headers);
-        }
+                var jsonInfo = JsonConvert.SerializeObject(apiInfo, Formatting.Indented);
+                AllureLifecycle.Instance.AddAttachment("api-call.json", "application/json", jsonInfo);
 
-        public async Task<ApiResponse<T>> PutAsync<T>(string endpoint, object body, Dictionary<string, string>? headers = null)
-        {
-            return await ExecuteAsync<T>(endpoint, HttpMethod.Put, body, headers);
-        }
-
-        public async Task<ApiResponse<T>> DeleteAsync<T>(string endpoint, Dictionary<string, string>? headers = null)
-        {
-            return await ExecuteAsync<T>(endpoint, HttpMethod.Delete, null, headers);
+                if (!response.IsSuccess && !string.IsNullOrEmpty(response.ErrorMessage))
+                {
+                    AllureLifecycle.Instance.AddAttachment("api-error.txt", "text/plain", 
+                        $"Error: {response.ErrorMessage}\nStatusCode: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Warning($"Failed to add Allure attachment: {ex.Message}");
+            }
         }
 
         private RestRequest CreateRequest(string endpoint, HttpMethod method, object? body, Dictionary<string, string>? headers)
         {
             var request = new RestRequest(endpoint, ConvertToRestSharpMethod(method));
             
-            // Default headers
-            request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("Accept", "application/json");
-            
-            // API Key header
-            var apiKey = _configuration["ApiSettings:ApiKey"];
+            // API Key ekle
+            var apiKey = _configuration.GetValue<string>("ApiSettings:ApiKey");
             if (!string.IsNullOrEmpty(apiKey))
             {
                 request.AddHeader("X-API-Key", apiKey);
-                _logger.Debug("Added API key to request");
             }
             
-            // Custom headers
+            if (!string.IsNullOrEmpty(_authToken))
+            {
+                request.AddHeader("Authorization", $"Bearer {_authToken}");
+            }
+            
             if (headers != null)
             {
                 foreach (var header in headers)
@@ -145,24 +175,6 @@ namespace ApiTestAutomationProject.Drivers
                 }
             }
             
-            // Authentication header (if token is available)
-            if (!string.IsNullOrEmpty(_authToken))
-            {
-                request.AddHeader("Authorization", $"Bearer {_authToken}");
-                _logger.Debug("Added Bearer token to request");
-            }
-            else
-            {
-                // Fallback to configuration token if no session token
-                var configToken = _configuration["ApiSettings:AuthToken"];
-                if (!string.IsNullOrEmpty(configToken))
-                {
-                    request.AddHeader("Authorization", $"Bearer {configToken}");
-                    _logger.Debug("Added configuration Bearer token to request");
-                }
-            }
-            
-            // Request body
             if (body != null)
             {
                 var jsonBody = JsonConvert.SerializeObject(body);
@@ -185,31 +197,30 @@ namespace ApiTestAutomationProject.Drivers
             };
         }
 
-        private ApiResponse<T> CreateApiResponse<T>(RestResponse<T> response)
+        private ApiResponse<T> CreateApiResponse<T>(RestResponse<T> response, TimeSpan duration, object? requestBody)
         {
-            var headers = new Dictionary<string, string>();
-            if (response.Headers != null)
-            {
-                foreach (var header in response.Headers)
-                {
-                    var headerName = header.Name ?? "";
-                    var headerValue = header.Value?.ToString() ?? "";
-                    
-                    // Skip duplicate headers or use the last one
-                    if (!string.IsNullOrEmpty(headerName))
-                    {
-                        headers[headerName] = headerValue;
-                    }
-                }
-            }
-
-            return new ApiResponse<T>
+            var apiResponse = new ApiResponse<T>
             {
                 Data = response.Data,
                 StatusCode = response.StatusCode,
                 ErrorMessage = response.ErrorMessage,
-                Headers = headers
+                Duration = duration,
+                RequestBody = requestBody != null ? JsonConvert.SerializeObject(requestBody, Formatting.Indented) : null,
+                ResponseBody = response.Content
             };
+
+            if (response.Headers != null)
+            {
+                foreach (var header in response.Headers)
+                {
+                    if (header.Name != null && header.Value != null)
+                    {
+                        apiResponse.Headers[header.Name] = header.Value.ToString() ?? string.Empty;
+                    }
+                }
+            }
+
+            return apiResponse;
         }
 
         private void LogRequest(RestRequest request, object? body)
@@ -224,10 +235,31 @@ namespace ApiTestAutomationProject.Drivers
         private void LogResponse<T>(ApiResponse<T> response)
         {
             _logger.Information($"API Response: {response.StatusCode}");
+            
             if (!response.IsSuccess)
             {
                 _logger.Warning($"API Error: {response.ErrorMessage}");
             }
+        }
+
+        public async Task<ApiResponse<T>> GetAsync<T>(string endpoint, Dictionary<string, string>? headers = null)
+        {
+            return await ExecuteAsync<T>(endpoint, HttpMethod.Get, null, headers);
+        }
+
+        public async Task<ApiResponse<T>> PostAsync<T>(string endpoint, object body, Dictionary<string, string>? headers = null)
+        {
+            return await ExecuteAsync<T>(endpoint, HttpMethod.Post, body, headers);
+        }
+
+        public async Task<ApiResponse<T>> PutAsync<T>(string endpoint, object body, Dictionary<string, string>? headers = null)
+        {
+            return await ExecuteAsync<T>(endpoint, HttpMethod.Put, body, headers);
+        }
+
+        public async Task<ApiResponse<T>> DeleteAsync<T>(string endpoint, Dictionary<string, string>? headers = null)
+        {
+            return await ExecuteAsync<T>(endpoint, HttpMethod.Delete, null, headers);
         }
     }
 } 

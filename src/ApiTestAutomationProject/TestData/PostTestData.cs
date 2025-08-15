@@ -9,6 +9,8 @@ namespace ApiTestAutomationProject.TestData
     {
         Valid,
         Valid2,
+        Invalid,
+        Empty,
         ErrNoTitle,
         ErrEmptyTitle,
         ErrNoBody,
@@ -25,6 +27,8 @@ namespace ApiTestAutomationProject.TestData
         {
             [EnumPost.Valid] = CreateValidPost,
             [EnumPost.Valid2] = CreateValidPost2,
+            [EnumPost.Invalid] = CreateInvalidPost,
+            [EnumPost.Empty] = CreateEmptyPost,
             [EnumPost.ErrNoTitle] = CreateNoTitlePost,
             [EnumPost.ErrEmptyTitle] = CreateEmptyTitlePost,
             [EnumPost.ErrNoBody] = CreateNoBodyPost,
@@ -39,6 +43,8 @@ namespace ApiTestAutomationProject.TestData
         {
             [EnumPost.Valid] = CreateValidUpdatePost,
             [EnumPost.Valid2] = CreateValidUpdatePost2,
+            [EnumPost.Invalid] = CreateInvalidUpdatePost,
+            [EnumPost.Empty] = CreateEmptyUpdatePost,
             [EnumPost.ErrNoTitle] = CreateNoTitleUpdatePost,
             [EnumPost.ErrEmptyTitle] = CreateEmptyTitleUpdatePost,
             [EnumPost.ErrNoBody] = CreateNoBodyUpdatePost,
@@ -66,6 +72,20 @@ namespace ApiTestAutomationProject.TestData
             Title = "Another Test Post",
             Body = "This is another test post body content",
             UserId = ValidUserId2
+        };
+
+        private CreatePostRequest CreateInvalidPost => new()
+        {
+            Title = "Invalid Post Title",
+            Body = "This is an invalid post body content",
+            UserId = InvalidUserId
+        };
+
+        private CreatePostRequest CreateEmptyPost => new()
+        {
+            Title = "",
+            Body = "",
+            UserId = ValidUserId
         };
 
         private CreatePostRequest CreateNoTitlePost => new()
@@ -136,6 +156,20 @@ namespace ApiTestAutomationProject.TestData
             Title = "Updated Another Test Post",
             Body = "This is an updated another test post body content",
             UserId = ValidUserId2
+        };
+
+        private UpdatePostRequest CreateInvalidUpdatePost => new()
+        {
+            Title = "Invalid Updated Post Title",
+            Body = "This is an invalid updated post body content",
+            UserId = InvalidUserId
+        };
+
+        private UpdatePostRequest CreateEmptyUpdatePost => new()
+        {
+            Title = "",
+            Body = "",
+            UserId = ValidUserId
         };
 
         private UpdatePostRequest CreateNoTitleUpdatePost => new()

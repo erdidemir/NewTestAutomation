@@ -10,6 +10,9 @@
     <SpecFlow_EnableAnalytics>false</SpecFlow_EnableAnalytics>
     <SpecFlow_EnableLivingDocGenerator>true</SpecFlow_EnableLivingDocGenerator>
     <SpecFlow_GenerateRuntimeConfiguration>false</SpecFlow_GenerateRuntimeConfiguration>
+    <!-- Allure Report Settings -->
+    <AllureResultsDirectory>$(MSBuildProjectDirectory)\allure-results</AllureResultsDirectory>
+    <AllureReportDirectory>$(MSBuildProjectDirectory)\allure-report</AllureReportDirectory>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,12 +30,15 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
+    <!-- Allure Report Packages -->
     <PackageReference Include="Allure.NUnit" />
     <PackageReference Include="Allure.Commons" />
+    <!-- Logging Packages -->
     <PackageReference Include="Serilog" />
     <PackageReference Include="Serilog.Sinks.File" />
     <PackageReference Include="Serilog.Sinks.Console" />
     <PackageReference Include="Serilog.Extensions.Hosting" />
+    <!-- Resilience Packages -->
     <PackageReference Include="Polly" />
     <PackageReference Include="Polly.Extensions.Http" />
     <!-- SpecFlow Packages -->
@@ -50,6 +56,9 @@
 
   <ItemGroup>
     <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="allure.properties">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

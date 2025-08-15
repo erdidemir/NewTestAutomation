@@ -1,12 +1,12 @@
 @Feature:PostCreate
 @Target:API
+@PostCreate
+@need
 Feature: Post Create Operations
     Tests for Post Create operations using ReqRes API
 
-    @BI:
-    @Submenu:CreateAndGet
-    @Subject:Privileges
-    @Target:API
+    @PostCreate
+    @need:create
     Scenario Outline: Create post and get the created post
         Given the user is logged in with valid credentials
         When a post with <postType> is created

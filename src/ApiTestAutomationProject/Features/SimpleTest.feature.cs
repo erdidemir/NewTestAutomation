@@ -20,27 +20,25 @@ namespace ApiTestAutomationProject.Features
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.9.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
-    [NUnit.Framework.DescriptionAttribute("Post Create Operations")]
-    [NUnit.Framework.CategoryAttribute("Feature:PostCreate")]
+    [NUnit.Framework.DescriptionAttribute("Simple Test")]
+    [NUnit.Framework.CategoryAttribute("Feature:SimpleTest")]
     [NUnit.Framework.CategoryAttribute("Target:API")]
-    [NUnit.Framework.CategoryAttribute("PostCreate")]
     [NUnit.Framework.CategoryAttribute("need")]
-    public partial class PostCreateOperationsFeature
+    public partial class SimpleTestFeature
     {
         
         private TechTalk.SpecFlow.ITestRunner testRunner;
         
         private static string[] featureTags = new string[] {
-                "Feature:PostCreate",
+                "Feature:SimpleTest",
                 "Target:API",
-                "PostCreate",
                 "need"};
         
         [NUnit.Framework.OneTimeSetUpAttribute()]
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "Post Create Operations", "    Tests for Post Create operations using ReqRes API", ProgrammingLanguage.CSharp, featureTags);
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "Simple Test", "    A simple test to verify Allure reporting", ProgrammingLanguage.CSharp, featureTags);
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -79,25 +77,14 @@ namespace ApiTestAutomationProject.Features
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Create post and get the created post")]
-        [NUnit.Framework.CategoryAttribute("PostCreate")]
-        [NUnit.Framework.CategoryAttribute("need:create")]
-        [NUnit.Framework.TestCaseAttribute("Valid", "Created", null)]
-        [NUnit.Framework.TestCaseAttribute("Valid2", "Created", null)]
-        public void CreatePostAndGetTheCreatedPost(string postType, string result, string[] exampleTags)
+        [NUnit.Framework.DescriptionAttribute("Simple test scenario")]
+        [NUnit.Framework.CategoryAttribute("need:simple")]
+        public void SimpleTestScenario()
         {
-            string[] @__tags = new string[] {
-                    "PostCreate",
-                    "need:create"};
-            if ((exampleTags != null))
-            {
-                @__tags = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(@__tags, exampleTags));
-            }
-            string[] tagsOfScenario = @__tags;
+            string[] tagsOfScenario = new string[] {
+                    "need:simple"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            argumentsOfScenario.Add("postType", postType);
-            argumentsOfScenario.Add("result", result);
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Create post and get the created post", null, tagsOfScenario, argumentsOfScenario, featureTags);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Simple test scenario", null, tagsOfScenario, argumentsOfScenario, featureTags);
             this.ScenarioInitialize(scenarioInfo);
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
             {
@@ -106,11 +93,9 @@ namespace ApiTestAutomationProject.Features
             else
             {
                 this.ScenarioStart();
-                testRunner.Given("the user is logged in with valid credentials", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-                testRunner.When(string.Format("a post with {0} is created", postType), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-                testRunner.And("the created post is retrieved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-                testRunner.Then(string.Format("the post creation is {0}", result), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-                testRunner.And("the retrieved post matches the created post", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+                testRunner.Given("I have a simple test", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+                testRunner.When("I run the test", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+                testRunner.Then("the test should pass", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
             }
             this.ScenarioCleanup();
         }
