@@ -13,6 +13,8 @@
     <!-- Allure Report Settings -->
     <AllureResultsDirectory>$(MSBuildProjectDirectory)\allure-results</AllureResultsDirectory>
     <AllureReportDirectory>$(MSBuildProjectDirectory)\allure-report</AllureReportDirectory>
+    <AllureResultsPath>$(MSBuildProjectDirectory)\allure-results</AllureResultsPath>
+    <AllureReportPath>$(MSBuildProjectDirectory)\allure-report</AllureReportPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,6 +35,7 @@
     <!-- Allure Report Packages -->
     <PackageReference Include="Allure.NUnit" />
     <PackageReference Include="Allure.Commons" />
+
     <!-- Logging Packages -->
     <PackageReference Include="Serilog" />
     <PackageReference Include="Serilog.Sinks.File" />

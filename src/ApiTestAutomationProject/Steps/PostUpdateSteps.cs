@@ -2,6 +2,7 @@ using TechTalk.SpecFlow;
 using ApiTestAutomationProject.Drivers;
 using ApiTestAutomationProject.Models;
 using ApiTestAutomationProject.TestData;
+using ApiTestAutomationProject.Helpers;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Serilog;
@@ -37,6 +38,8 @@ namespace ApiTestAutomationProject.Steps
         [Given(@"a post exists with (.*)")]
         public async Task GivenAPostExistsWithPostType(string postType)
         {
+            SimpleReportHelper.LogInfo($"Checking if post exists with type: {postType}");
+            
             if (Enum.TryParse<EnumPost>(postType, out var enumPost))
             {
                 // ReqRes API'si test API'si olduğu için mevcut post ID'lerini kullanıyoruz
@@ -48,11 +51,14 @@ namespace ApiTestAutomationProject.Steps
                 _scenarioContext["PostId"] = postId;
                 _scenarioContext["PostType"] = enumPost;
                 
+                SimpleReportHelper.LogPass($"Existing post with ID {postId} and type {postType} verified successfully");
                 _logger.Information($"Existing post with ID {postId} and type {postType} verified");
             }
             else
             {
-                throw new ArgumentException($"Unknown post type: {postType}");
+                var errorMessage = $"Unknown post type: {postType}";
+                SimpleReportHelper.LogFail(errorMessage);
+                throw new ArgumentException(errorMessage);
             }
         }
 
@@ -61,6 +67,8 @@ namespace ApiTestAutomationProject.Steps
         {
             var postId = _scenarioContext.Get<string>("PostId");
             var postType = _scenarioContext.Get<EnumPost>("PostType");
+            
+            SimpleReportHelper.LogInfo($"Updating post with ID {postId} using update type: {updateType}");
             
             if (Enum.TryParse<EnumPost>(updateType, out var enumUpdate))
             {
@@ -72,11 +80,14 @@ namespace ApiTestAutomationProject.Steps
                 _scenarioContext["UpdateType"] = enumUpdate;
                 _scenarioContext["UpdatedPostData"] = updateData;
                 
+                SimpleReportHelper.LogInfo($"Post update API call completed. Status: {response.StatusCode}");
                 _logger.Information($"Post with ID {postId} update attempted with {updateType}");
             }
             else
             {
-                throw new ArgumentException($"Unknown update type: {updateType}");
+                var errorMessage = $"Unknown update type: {updateType}";
+                SimpleReportHelper.LogFail(errorMessage);
+                throw new ArgumentException(errorMessage);
             }
         }
 
@@ -84,10 +95,15 @@ namespace ApiTestAutomationProject.Steps
         public async Task WhenTheUpdatedPostIsRetrieved()
         {
             var postId = _scenarioContext.Get<string>("PostId");
+            
+            SimpleReportHelper.LogInfo($"Retrieving updated post with ID: {postId}");
+            
             var endpoint = _endpointManager.GetEndpoint("Posts", "GetById", postId);
             var response = await _apiClient.GetAsync<GetPostResponse>(endpoint);
             
             _scenarioContext["GetUpdatedPostResponse"] = response;
+            
+            SimpleReportHelper.LogInfo($"Updated post retrieved. Status: {response.StatusCode}");
             _logger.Information($"Updated post with ID {postId} retrieved");
         }
 
@@ -97,17 +113,23 @@ namespace ApiTestAutomationProject.Steps
             var response = _scenarioContext.Get<ApiResponse<UpdatePostResponse>>("UpdatePostResponse");
             var updateType = _scenarioContext.Get<EnumPost>("UpdateType");
             
+            SimpleReportHelper.LogInfo($"Verifying post update result: {result}");
+            
             switch (result.ToLower())
             {
                 case "updated":
                     _assertionHelper.AssertSuccess(response, "Post should be updated successfully");
+                    SimpleReportHelper.LogPass("Post update verification passed - Update was successful");
                     break;
                 case "badrequest":
                     // ReqRes API accepts all data, so we expect success even for invalid data
                     _assertionHelper.AssertSuccess(response, "Post should be updated successfully (ReqRes API accepts all data)");
+                    SimpleReportHelper.LogPass("Post update verification passed - ReqRes API accepted invalid data as expected");
                     break;
                 default:
-                    throw new ArgumentException($"Unknown result: {result}");
+                    var errorMessage = $"Unknown result: {result}";
+                    SimpleReportHelper.LogFail(errorMessage);
+                    throw new ArgumentException(errorMessage);
             }
         }
 
@@ -116,12 +138,19 @@ namespace ApiTestAutomationProject.Steps
         {
             var getResponse = _scenarioContext.Get<ApiResponse<GetPostResponse>>("GetUpdatedPostResponse");
             
+            SimpleReportHelper.LogInfo("Verifying that retrieved post matches updated data");
+            
             _assertionHelper.AssertSuccess(getResponse, "Updated post should be retrieved successfully");
             
             if (getResponse.IsSuccess && getResponse.Data != null)
             {
                 // ReqRes API'si test API'si olduğu için sadece response'un başarılı olduğunu kontrol ediyoruz
+                SimpleReportHelper.LogPass("Updated post data verification passed - Response data exists and is valid");
                 _logger.Information($"Updated post retrieved successfully - Response data exists: {getResponse.Data != null}");
+            }
+            else
+            {
+                SimpleReportHelper.LogFail("Updated post data verification failed - No response data");
             }
         }
 

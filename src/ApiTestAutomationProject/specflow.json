@@ -20,5 +20,9 @@
     "traceTimings": false,
     "minTracedDuration": "0:0:0.1",
     "listener": "TechTalk.SpecFlow.Tracing.DefaultListener, TechTalk.SpecFlow"
+  },
+  "allure": {
+    "resultsDirectory": "allure-results",
+    "reportDirectory": "allure-report"
   }
 } 

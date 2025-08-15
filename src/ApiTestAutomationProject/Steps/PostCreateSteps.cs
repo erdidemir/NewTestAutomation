@@ -5,6 +5,7 @@ using ApiTestAutomationProject.TestData;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Serilog;
+using Allure.Commons;
 
 namespace ApiTestAutomationProject.Steps
 {
@@ -43,6 +44,8 @@ namespace ApiTestAutomationProject.Steps
                 Password = "cityslicka"
             };
             
+            // Allure attachment removed for now
+            
             var endpoint = _endpointManager.GetEndpoint("Authentication", "Login");
             var response = await _apiClient.PostAsync<LoginResponse>(endpoint, loginData);
             
@@ -52,6 +55,8 @@ namespace ApiTestAutomationProject.Steps
             {
                 _apiClient.SetAuthToken(response.Data.Token);
                 _logger.Information($"User logged in successfully with token: {response.Data.Token}");
+                
+                // Allure attachment removed for now
             }
             else
             {
@@ -66,6 +71,9 @@ namespace ApiTestAutomationProject.Steps
             if (Enum.TryParse<EnumPost>(postType, out var enumPost))
             {
                 var postData = _postTestData.CreateData[enumPost];
+                
+                // Allure attachment removed for now
+                
                 var endpoint = _endpointManager.GetEndpoint("Posts", "Create");
                 var response = await _apiClient.PostAsync<CreatePostResponse>(endpoint, postData);
                 
@@ -73,6 +81,8 @@ namespace ApiTestAutomationProject.Steps
                 _scenarioContext["PostType"] = enumPost;
                 _scenarioContext["CreatedPostData"] = postData;
                 _logger.Information($"Post with {postType} creation attempted for User ID: {postData.UserId}");
+                
+                // Allure attachment removed for now
             }
             else
             {

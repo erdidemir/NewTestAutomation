@@ -137,11 +137,15 @@ namespace ApiTestAutomationProject.Drivers
                 };
 
                 var jsonInfo = JsonConvert.SerializeObject(apiInfo, Formatting.Indented);
-                AllureLifecycle.Instance.AddAttachment("api-call.json", "application/json", jsonInfo);
+                var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                var attachmentName = $"api-call-{method.Method}-{timestamp}.json";
+                
+                AllureLifecycle.Instance.AddAttachment(attachmentName, "application/json", jsonInfo);
 
                 if (!response.IsSuccess && !string.IsNullOrEmpty(response.ErrorMessage))
                 {
-                    AllureLifecycle.Instance.AddAttachment("api-error.txt", "text/plain", 
+                    var errorAttachmentName = $"api-error-{method.Method}-{timestamp}.txt";
+                    AllureLifecycle.Instance.AddAttachment(errorAttachmentName, "text/plain", 
                         $"Error: {response.ErrorMessage}\nStatusCode: {response.StatusCode}");
                 }
             }
