@@ -2,6 +2,19 @@
 
 Bu proje, API testlerini otomatize etmek için geliştirilmiş bir test automation framework'üdür.
 
+## 📖 Kurulum Rehberi
+
+**Yeni başlayanlar için detaylı kurulum rehberi:** [KURULUM_REHBERI.md](./KURULUM_REHBERI.md)
+
+Bu rehber şunları içerir:
+- ✅ Visual Studio Community 2022 kurulumu
+- ✅ .NET 9 SDK kurulumu
+- ✅ Java JDK kurulumu
+- ✅ Allure CLI kurulumu
+- ✅ Git kurulumu (opsiyonel)
+- ✅ Adım adım kurulum talimatları
+- ✅ Sorun giderme ipuçları
+
 ## 🚀 Özellikler
 
 - **SpecFlow BDD Framework**: Behavior Driven Development yaklaşımı

@@ -2,6 +2,20 @@
 
 Modern web uygulamaları için geliştirilmiş kapsamlı test otomasyonu çözümü. Clean Architecture prensipleri kullanılarak tasarlanmış, çoklu tarayıcı desteği, gelişmiş raporlama ve performans monitoring özellikleri içerir.
 
+## 📖 Kurulum Rehberi
+
+**Yeni başlayanlar için detaylı kurulum rehberi:** [KURULUM_REHBERI.md](./KURULUM_REHBERI.md)
+
+Bu rehber şunları içerir:
+- ✅ Visual Studio Community 2022 kurulumu
+- ✅ .NET 9 SDK kurulumu
+- ✅ Java JDK kurulumu
+- ✅ Allure CLI kurulumu
+- ✅ Tarayıcı kurulumları (Chrome, Edge)
+- ✅ Git kurulumu (opsiyonel)
+- ✅ Adım adım kurulum talimatları
+- ✅ Sorun giderme ipuçları
+
 ## 🚀 Yeni Özellikler
 
 ### 📊 Performans Monitoring Sistemi
